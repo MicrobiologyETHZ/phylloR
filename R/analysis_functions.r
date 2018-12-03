@@ -1,13 +1,3 @@
-#' Package for microbiome analysis of the phyllosphere
-#' 
-#' The package \pkg{phylloR} provides functions for analysing controlled experiments (not wild) involving the phyllosphere microbiome
-#'
-#' @docType package
-#' @name phylloR
-#' @author Chris Field <fieldc@@ethz.ch">
-
-NULL
-
 #' Function to make a compatible data set (CDS) and calculate DESeq2 results.
 #'
 #' @param counts A count table in which the rows are strains or OTUs and the columns are samples.

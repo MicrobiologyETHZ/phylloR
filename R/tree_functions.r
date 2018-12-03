@@ -19,10 +19,6 @@
 #' @examples
 #' None
 
-
-library(ape)
-library(plotrix)
-
 as.ultrametric <- function(phylo){
     # A function to add length to tips so that a tree is ultrametric
     if(!is.rooted(phylo)){

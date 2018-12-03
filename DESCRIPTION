@@ -10,6 +10,8 @@ Description: This package provides functions for the analysis of phyllosphere mi
 Depends: R (>= 3.3.1)
 Imports:
     DESeq2
+    ape
+    plotrix
 License: TBD
 Encoding: UTF-8
 LazyData: true

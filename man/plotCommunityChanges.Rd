@@ -5,7 +5,7 @@
 \title{Function to plot the changes in the community at a strain level.}
 \usage{
 plotCommunityChanges(cds, soi = NULL, cutoff = 0.05, rowLabs = NULL,
-  subtitle = NULL)
+  subtitle = NULL, cols = palette())
 }
 \arguments{
 \item{cds}{A compatible data set produced by the makeCDS() function.}
@@ -17,6 +17,8 @@ plotCommunityChanges(cds, soi = NULL, cutoff = 0.05, rowLabs = NULL,
 \item{rowLabs}{A vector of names for the strains of interest, for plotting.}
 
 \item{subtitle}{A subtitle for the plot.}
+
+\item{cols}{A vector of two colours for the bars}
 }
 \value{
 None.

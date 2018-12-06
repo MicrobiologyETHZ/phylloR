@@ -65,14 +65,6 @@ makeCDS <- function(counts,meta,include=NULL,exclude=NULL,foi,ftc=NULL,title=NUL
     return(cds)
 }
 
-# Colour definitions
-colTable <- read.delim("colours.txt",header=T,row.names=1)
-phyCols <- rgb(colTable,maxColorValue=255)
-names(phyCols) <- rownames(colTable)
-biCols <- c("#214478",phyCols[6])
-names(biCols) <- NULL
-rm(colTable)
-
 #' Function to calculate and plot a PCA comparing sample groups at the whole community level.
 #'
 #' @param cds A compatible data set produced by the makeCDS() function.
@@ -159,6 +151,7 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
 #' @param cutoff A p-value cutoff to determine which strains will be included individually in the plot.
 #' @param rowLabs A vector of names for the strains of interest, for plotting.
 #' @param subtitle A subtitle for the plot.
+#' @param cols A vector of two colours for the bars
 #' @details
 #' None.
 #' @keywords phylloR
@@ -169,7 +162,7 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
 #' None
 
 # Barplot of the subset divided by foi
-plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=NULL){
+plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=palette()){
     if(is.null(soi)){
                 soi = rownames(cds$counts)
     }
@@ -211,11 +204,11 @@ plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=
     for(i in 1:(2*nrow(ra))){
         s = stats[[2-(i%%2)]][[(i+(i%%2))/2]]
         z = zeros[[2-(i%%2)]][(i+(i%%2))/2]
-        rect(i-0.4,s$stats[2],i+0.4,s$stats[4],col=bicols[2-(i%%2)])
+        rect(i-0.4,s$stats[2],i+0.4,s$stats[4],col=cols[2-(i%%2)])
         segments(rep(i,2),s$stats[c(1,4)],rep(i,2),s$stats[c(2,5)])
         segments(i-0.4,s$stats[3],i+0.4,s$stats[3],lwd=2)
-        points(rep(i,length(s$out)),s$out,pch=20,col=bicols[2-(i%%2)])
-        points(i,1e-3,cex=2*sqrt(z/nrow(ras[[2-(i%%2)]])),col=bicols[2-(i%%2)],pch=20)
+        points(rep(i,length(s$out)),s$out,pch=20,col=cols[2-(i%%2)])
+        points(i,1e-3,cex=2*sqrt(z/nrow(ras[[2-(i%%2)]])),col=cols[2-(i%%2)],pch=20)
         text(i,1.3e-3,z)
     }
 

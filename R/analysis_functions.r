@@ -9,6 +9,7 @@
 #' @param title A title for the data set that will carry through to plots.
 #' @param legend A vector with the names of the sample groups.
 #' @details
+#' As an alternative to giving both the *counts* and *meta* arguments, you may give a single argument that is a list containing items labelled *counts* and *meta*.
 #' The lists for the include and exclude arguments should consist of vectors named to match the columns of the metadata being considered and contain the valid (or invalid) items.
 #' For instance: include=list(initial_condition=c("Control","Test"),time=c("t1","t2")).
 #' Samples are filtered first by the include list, then the exclude list. You can of course slice the data set in advance according to more complex criteria.
@@ -20,6 +21,10 @@
 #' None
 
 makeCDS <- function(counts,meta,include=NULL,exclude=NULL,foi,ftc=NULL,title=NULL,legend=NULL){
+    if(missing(meta)){
+        counts = counts$counts
+        meta = counts$meta
+    }
     # Slice data
     if(!is.null(include)){
         for(i in 1:length(include)){

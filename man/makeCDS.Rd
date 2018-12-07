@@ -31,6 +31,7 @@ A list containing the original dataset, the DESeq2-analysed dataset and the acco
 Function to make a compatible data set (CDS) and calculate DESeq2 results.
 }
 \details{
+As an alternative to giving both the *counts* and *meta* arguments, you may give a single argument that is a list containing items labelled *counts* and *meta*.
 The lists for the include and exclude arguments should consist of vectors named to match the columns of the metadata being considered and contain the valid (or invalid) items.
 For instance: include=list(initial_condition=c("Control","Test"),time=c("t1","t2")).
 Samples are filtered first by the include list, then the exclude list. You can of course slice the data set in advance according to more complex criteria.

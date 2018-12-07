@@ -22,8 +22,9 @@
 
 makeCDS <- function(counts,meta,include=NULL,exclude=NULL,foi,ftc=NULL,title=NULL,legend=NULL){
     if(missing(meta)){
-        counts = counts$counts
-        meta = counts$meta
+        ds = counts
+        counts = ds$counts
+        meta = ds$meta
     }
     # Slice data
     if(!is.null(include)){

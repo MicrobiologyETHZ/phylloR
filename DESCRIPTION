@@ -1,6 +1,6 @@
 Package: phylloR
 Title: R package for phyllosphere analysis
-Version: 0.0.0.9000
+Version: 0.0.0.12
 Authors@R: 
     person(given = "Chris",
            family = "Field",

@@ -9,9 +9,10 @@ Authors@R:
 Description: This package provides functions for the analysis of phyllosphere microbiome experiments using defined communities.
 Depends: R (>= 3.3.1)
 Depends:
-    DESeq2,
     ape,
     plotrix
+biocViews:
+    DESeq2
 License: TBD
 Encoding: UTF-8
 LazyData: true

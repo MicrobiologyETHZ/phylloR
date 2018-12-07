@@ -7,8 +7,8 @@ Authors@R:
            role = c("aut", "cre"),
            email = "fieldc@ethz.ch")
 Description: This package provides functions for the analysis of phyllosphere microbiome experiments using defined communities.
-Depends: R (>= 3.3.1)
 Depends:
+    R (>= 3.3.1),
     ape,
     plotrix
 biocViews:

@@ -8,7 +8,7 @@ Authors@R:
            email = "fieldc@ethz.ch")
 Description: This package provides functions for the analysis of phyllosphere microbiome experiments using defined communities.
 Depends: R (>= 3.3.1)
-Imports:
+Depends:
     DESeq2,
     ape,
     plotrix

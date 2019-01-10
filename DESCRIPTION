@@ -11,8 +11,10 @@ biocViews:
 Depends:
     R (>= 3.3.1),
     ape,
+    apextra,
     plotrix,
     DESeq2
+Remotes: cmfield/apextra
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

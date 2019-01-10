@@ -5,7 +5,7 @@
 \title{Function to calculate and plot a PCA comparing sample groups at the whole community level.}
 \usage{
 plotPCA(cds, soi = NULL, perm = 100, cutoff = 0.05, rowLabs = NULL,
-  subtitle = NULL)
+  subtitle = NULL, cols = 1:2)
 }
 \arguments{
 \item{cds}{A compatible data set produced by the makeCDS() function.}

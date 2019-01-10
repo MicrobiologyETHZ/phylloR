@@ -13,7 +13,8 @@ Depends:
     ape,
     apextra,
     plotrix,
-    DESeq2
+    DESeq2,
+    vegan
 Remotes: cmfield/apextra
 License: GPL-3
 Encoding: UTF-8

@@ -144,3 +144,92 @@ treatmap <- function(phylo,mat,mask=NULL,mask.color="lightgrey",overlay=NULL,asp
     }
 }
 
+#' Function to summarise the results of multiple phyllosphere experiments
+#' @param cdsList A list object containing compatible data sets created by "makeCDS". The names of each item in the list will be used to label the summary tables. The results in the data sets must contain the same rows in the same order, i.e.: this function is designed to summarise peturbations to a core experiment.
+#' @details
+#' None
+#' @keywords None
+#' @return A list containing two data frames: fcMatrix is the summary of log2FoldChange results, pvMatrix is the summary of adjusted p-value results (padj).
+#' @export
+#' @author Chris Field <fieldc@@ethz.ch>
+#' @examples
+#' None
+
+summariseResults <- function(cdsList){
+    resultsList <- lapply(cdsList,function(x) x$results)
+
+    fcMatrix <- lapply(resultsList,function(x) x[,"log2FoldChange",F])
+    fcMatrix <- do.call(cbind,fcMatrix)
+    colnames(fcMatrix) <- names(resultsList)
+    fcMatrix[is.na(fcMatrix)] <- 0
+
+    pvMatrix <- lapply(resultsList,function(x) x[,"padj",F])
+    pvMatrix <- do.call(cbind,pvMatrix)
+    colnames(pvMatrix) <- names(resultsList)
+    pvMatrix[is.na(pvMatrix)] <- 1
+
+    return(list(fcMatrix=fcMatrix,pvMatrix=pvMatrix))
+}
+
+#' Function to plot a bipartite graph to summarise strain-strain interactions.
+#' @param fcMatrix A matrix of fold changes where the rows are labelled with the strains affected and the columns with the strains either added or removed from the core experiment.
+#' @param pvMatrix A matrix of p-values matching "fcMatrix".
+#' @param phylo An optional phylo object describing the phylogeny of the strains.
+#' @param strainOrder An optional vector of character strings to place the strains in a particular order.
+#' @param experiment.type A character string that is either "removal" or "addition" to describe the nature of the perturbations to the core experiment.
+#' @param tip.label.width A numeric to indicate how much space should be placed between the tips of the tree (if provided) and graph lines.
+#' @param ... Other arguments passed to "draw.phylo" from the "apextra" package.
+#' @details
+#' The order in which the strains appear is determined by "strainOrder" preferentially, otherwise the order of the tips in "phylo", and otherwise as they are given in "fcMatrix".
+#' @keywords None
+#' @return None
+#' @export
+#' @author Chris Field <fieldc@@ethz.ch>
+#' @examples
+#' None
+
+plotBipartiteSummary <- function(fcMatrix,pvMatrix,phylo=NULL,strainOrder=NULL,experiment.type="removal",tip.label.width=0,...){
+
+    if(is.null(strainOrder)){
+        if(!is.null(phylo)){
+            strainOrder = phylo$tip.label
+        }else{
+            strainOrder = rownames(fcMatrix)
+        }
+    }
+
+    plot.new()
+    plot.window(xlim=c(-1,1),ylim=c(1,nrow(fcMatrix)))
+
+    lineCols = colorRampPalette(c("blue","white","red"))(33)
+
+    fcMatrix <- fcMatrix[strainOrder,]
+    fcMax <- ceiling(max(abs(fcMatrix)))
+    fcBins <- seq(-fcMax,fcMax,length.out=33)
+    fcVals <- apply(fcMatrix,2,function(x) cut(x,fcBins,labels=F))
+
+    pvBins <- c(0,1e-6,1e-5,1e-4,1e-3,5e-2,1)
+    pvVals <- 6-apply(pvMatrix,2,function(x) cut(x,pvBins,labels=F))
+
+    if(!is.null(phylo)){
+        draw.phylo(-1,1,-0.75,nrow(fcMatrix),phylo,show.tip.label=T,...)
+        draw.phylo(0.75,1,1,nrow(fcMatrix),phylo,direction="l",show.tip.label=T,...)
+    }else{
+        text(-0.75,1:nrow(fcMatrix),rownames(fcMatrix),pos=2,col=strainCols)
+        text(0.75,1:nrow(fcMatrix),rownames(fcMatrix),pos=4,col=strainCols)
+    }
+    t = seq(0,1,length.out=101)
+    for(i in 1:nrow(fcMatrix)){
+        for(j in 1:ncol(fcMatrix)){
+            s = which(rownames(fcMatrix)==colnames(fcMatrix)[j])
+            p = matrix(c(-0.75+tip.label.width,0,0,0.75-tip.label.width,s,s,i,i),ncol=2)
+            if((i!=s) & pvVals[i,j]>0){
+                lines(bezier(t,p),col=paste(lineCols[fcVals[i,j]],"AA",sep=""),lwd=2*pvVals[i,j])
+            }
+        }
+    }
+}
+
+
+
+

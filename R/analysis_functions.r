@@ -88,7 +88,7 @@ makeCDS <- function(counts,meta,include=NULL,exclude=NULL,foi,ftc=NULL,title=NUL
 #' @examples
 #' None
 
-plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL){
+plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=1:2){
     if(is.null(soi)){
         soi = rownames(cds$counts)
     }
@@ -114,7 +114,7 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
 
     if(!is.null(cds$ftc)){
         plot(pca$x[,1:2],
-             col=bicols[cds$meta[,cds$foi]],
+             col=cols[cds$meta[,cds$foi]],
              pch=14+as.numeric(cds$meta[,cds$ftc]),
              main=title,
              sub=paste("Effect Size: ",formatC(100*adn$aov.tab$R2[1],digits=3),"%; P-value: ",formatC(adn$aov.tab$Pr[1],3),sep=""),
@@ -122,7 +122,7 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
             )
     }else{
         plot(pca$x[,1:2],
-             col=bicols[cds$meta[,cds$foi]],
+             col=cols[cds$meta[,cds$foi]],
              pch=16,
              main=title,
              sub=paste("Effect Size: ",formatC(100*adn$aov.tab$R2[1],digits=3),"%; P-value: ",formatC(adn$aov.tab$Pr[1],3),sep=""),
@@ -143,9 +143,9 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
 
     if(!is.null(cds$ftc)){
         pairs = expand.grid(cds$legend,levels(cds$meta[,cds$ftc]))
-        legend("topleft",inset=c(1.01,0),legend=apply(pairs,1,paste,collapse=" "),pch=14+as.numeric(pairs[,2]),col=rep(bicols,length(levels(cds$meta[,cds$ftc]))))
+        legend("topleft",inset=c(1.01,0),legend=apply(pairs,1,paste,collapse=" "),pch=14+as.numeric(pairs[,2]),col=rep(cols,length(levels(cds$meta[,cds$ftc]))))
     }else{
-        legend("topleft",inset=c(1.01,0),legend=cds$legend,pch=16,col=bicols)
+        legend("topleft",inset=c(1.01,0),legend=cds$legend,pch=16,col=cols)
     }
     return(adn)
 }

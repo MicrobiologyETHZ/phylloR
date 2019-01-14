@@ -5,7 +5,7 @@
 \title{Function to produce a pie chart of an individual community.}
 \usage{
 plotCommunityPie(counts, strainTaxa, cols, taxLabels = NULL,
-  sort.tax = FALSE, ...)
+  sort.tax = FALSE, drop = TRUE, ...)
 }
 \arguments{
 \item{counts}{A count table in which the rows are strains or OTUs and the columns are samples. The table should include only a single sample group.}
@@ -17,6 +17,10 @@ plotCommunityPie(counts, strainTaxa, cols, taxLabels = NULL,
 \item{taxLabels}{An optional vector defining the taxonomic labels to plot, with the default being the unique values of strainTaxa.}
 
 \item{sort.tax}{If true, the taxonomic labels will be sorted from smallest to largest abundance.}
+
+\item{drop}{A logical indicating whether unseen taxa should be dropped from the plot, defaults to TRUE.}
+
+\item{...}{Further arguments to be passed to "pie".}
 }
 \value{
 None.

@@ -6,7 +6,7 @@
 \usage{
 plotBipartiteSummary(fcMatrix, pvMatrix, phylo = NULL,
   strainOrder = NULL, experiment.type = "removal",
-  tip.label.width = 0, ...)
+  tip.label.width = 0.1, ...)
 }
 \arguments{
 \item{fcMatrix}{A matrix of fold changes where the rows are labelled with the strains affected and the columns with the strains either added or removed from the core experiment.}

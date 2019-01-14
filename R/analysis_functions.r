@@ -147,7 +147,7 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
     }else{
         legend("topleft",inset=c(1.01,0),legend=cds$legend,pch=16,col=cols)
     }
-    return(adn)
+    return(list(pca=pca,stats=adn))
 }
 
 #' Function to plot the changes in the community at a strain level.
@@ -298,7 +298,7 @@ plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50){
         text(i,1.3e-3,zeros[i])
     }
 
-    return(stats)
+    return(list(propCounts=ncts,stats=stats))
 }
 
 #' Function to produce a pie chart of an individual community.
@@ -308,6 +308,8 @@ plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50){
 #' @param cols A vector of colours where the names() of the vector correspond to the taxonomic labels.
 #' @param taxLabels An optional vector defining the taxonomic labels to plot, with the default being the unique values of strainTaxa.
 #' @param sort.tax If true, the taxonomic labels will be sorted from smallest to largest abundance.
+#' @param drop A logical indicating whether unseen taxa should be dropped from the plot, defaults to TRUE.
+#' @param ... Further arguments to be passed to "pie".
 #' @details
 #' For each taxonomic label, the sum of all counts for the strains with that label across all samples is divided by the total sum of the count table.
 #' @keywords phylloR
@@ -318,7 +320,7 @@ plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50){
 #' None
 
 # Pie chart of a community at a provided taxonomic level, using totals across multiple samples
-plotCommunityPie <- function(counts,strainTaxa,cols,taxLabels=NULL,sort.tax=FALSE,...){
+plotCommunityPie <- function(counts,strainTaxa,cols,taxLabels=NULL,sort.tax=FALSE,drop=TRUE,...){
     if(is.null(taxLabels)){
         taxLabels <- unique(strainTaxa)
     }
@@ -329,6 +331,10 @@ plotCommunityPie <- function(counts,strainTaxa,cols,taxLabels=NULL,sort.tax=FALS
     if(sort.tax){
         taxTotals <- sort(taxTotals)
         taxLabels <- names(taxTotals)
+    }
+    if(drop){
+        taxLabels <- taxLabels[taxTotals>0]
+        taxTotals <- taxTotals[taxTotals>0]
     }
 
     pie(taxTotals,radius=0.4,col=cols[taxLabels],clockwise=T,...)

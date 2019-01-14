@@ -188,7 +188,8 @@ summariseResults <- function(cdsList){
 #' @examples
 #' None
 
-plotBipartiteSummary <- function(fcMatrix,pvMatrix,phylo=NULL,strainOrder=NULL,experiment.type="removal",tip.label.width=0,...){
+plotBipartiteSummary <- function(fcMatrix,pvMatrix,phylo=NULL,strainOrder=NULL,experiment.type="removal",tip.label.width=0.1,...){
+#Try a version with thickness as fc, a pv cutoff, no color change, some alpha
 
     if(is.null(strainOrder)){
         if(!is.null(phylo)){
@@ -208,28 +209,77 @@ plotBipartiteSummary <- function(fcMatrix,pvMatrix,phylo=NULL,strainOrder=NULL,e
     fcBins <- seq(-fcMax,fcMax,length.out=33)
     fcVals <- apply(fcMatrix,2,function(x) cut(x,fcBins,labels=F))
 
+    pvMatrix <- pvMatrix[strainOrder,]
     pvBins <- c(0,1e-6,1e-5,1e-4,1e-3,5e-2,1)
     pvVals <- 6-apply(pvMatrix,2,function(x) cut(x,pvBins,labels=F))
 
     if(!is.null(phylo)){
-        draw.phylo(-1,1,-0.75,nrow(fcMatrix),phylo,show.tip.label=T,...)
-        draw.phylo(0.75,1,1,nrow(fcMatrix),phylo,direction="l",show.tip.label=T,...)
+        phyloL <- keep.tip(phylo,colnames(fcMatrix))
+        draw.phylo(-1,1,-0.75,Ntip(phyloL),phyloL,show.tip.label=T,...)
+        draw.phylo(0.75,1,1,Ntip(phylo),phylo,direction="l",show.tip.label=T,...)
     }else{
         text(-0.75,1:nrow(fcMatrix),rownames(fcMatrix),pos=2,col=strainCols)
         text(0.75,1:nrow(fcMatrix),rownames(fcMatrix),pos=4,col=strainCols)
     }
+
     t = seq(0,1,length.out=101)
     for(i in 1:nrow(fcMatrix)){
         for(j in 1:ncol(fcMatrix)){
             s = which(rownames(fcMatrix)==colnames(fcMatrix)[j])
-            p = matrix(c(-0.75+tip.label.width,0,0,0.75-tip.label.width,s,s,i,i),ncol=2)
-            if((i!=s) & pvVals[i,j]>0){
-                lines(bezier(t,p),col=paste(lineCols[fcVals[i,j]],"AA",sep=""),lwd=2*pvVals[i,j])
+            p = matrix(c(-0.75+tip.label.width,0,0,0.75-tip.label.width,j,j,i,i),ncol=2)
+            if((i!=s) & (pvMatrix[i,j]<0.05)){
+                lines(bezier(t,p),col=paste(c("#0000FF","#000000","#FF0000")[sign(fcMatrix[i,j])+2],"77",sep=""),lwd=abs(fcMatrix[i,j]))
             }
         }
     }
+    return(count)
 }
 
+#' Function to construct an igraph network from fold-change and p-value matrices
+#' @param fcMatrix A matrix of fold changes where the rows are labelled with the strains affected and the columns with the strains either added or removed from the core experiment.
+#' @param pvMatrix A matrix of p-values matching "fcMatrix".
+#' @param cutoff A numeric indicating the p-value significance cutoff.
+#' @details
+#' None
+#' @keywords None
+#' @return None
+#' @export
+#' @author Chris Field <fieldc@@ethz.ch>
+#' @examples
+#' None
 
+igraphFromSummary <- function(fcMatrix,pvMatrix,cutoff,type="removal"){
+    if(type=="removal"){
+        multiplier = -1
+    }else if(type=="addition"){
+        multiplier = 1
+    }else{
+        stop(type," is not a recognised type, should be \"removal\" or \"addition\".")
+    }
 
+    edgeList <- list()
+    edgeAttrList <- list()
+    for(i in 1:nrow(fcMatrix)){
+        for(j in 1:ncol(fcMatrix)){
+            if((pvMatrix[i,j]<cutoff) & (rownames(fcMatrix)[i]!=colnames(fcMatrix)[j])){
+                edgeList[[length(edgeList)+1]] <- c(colnames(fcMatrix)[j],rownames(fcMatrix)[i])
+                edgeAttrList[[length(edgeAttrList)+1]] <- c(sign(fcMatrix[i,j]),abs(fcMatrix[i,j]),pvMatrix[i,j])
+            }
+        }
+    }
+    edgeList <- do.call(rbind,edgeList)
+    edgeAttrList <- do.call(rbind,edgeAttrList)
+    colnames(edgeAttrList) <- c("Sign","Weight","Significance")
+
+    network <- graph_from_edgelist(edgeList)
+    for(attr in colnames(edgeAttrList)){
+        edge_attr(network,attr) <- edgeAttrList[,attr]
+    }
+
+    vertex_attr(network,type) <- vertex_attr(net,"name")%in%colnames(fcMatrix)
+    vertex_attr(network,"name") <- leafTaxonomy[vertex_attr(net,"name"),"Name"]
+    vertex_attr(network,"color") <- leafTaxonomy[vertex_attr(net,"name"),"Color"]
+
+    return(network)
+}
 

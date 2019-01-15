@@ -277,8 +277,8 @@ igraphFromSummary <- function(fcMatrix,pvMatrix,cutoff,type="removal"){
     }
 
     vertex_attr(network,type) <- vertex_attr(network,"name")%in%colnames(fcMatrix)
-    vertex_attr(network,"name") <- leafTaxonomy[vertex_attr(network,"name"),"Name"]
     vertex_attr(network,"color") <- leafTaxonomy[vertex_attr(network,"name"),"Color"]
+    vertex_attr(network,"name") <- leafTaxonomy[vertex_attr(network,"name"),"Name"]
 
     return(network)
 }

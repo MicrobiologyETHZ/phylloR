@@ -14,7 +14,8 @@ Depends:
     apextra,
     plotrix,
     DESeq2,
-    vegan
+    vegan,
+    igraph
 Remotes: cmfield/apextra
 License: GPL-3
 Encoding: UTF-8

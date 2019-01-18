@@ -7,7 +7,7 @@
 treatmap(phylo, mat, mask = NULL, mask.color = "lightgrey",
   overlay = NULL, aspect.ratio = 1/exp(1), tip.labels = NULL,
   tip.colors = NULL, z.cols = NULL, z.res = NULL,
-  tip.label.width = NULL, scalebar = True, mat.labels = NULL,
+  tip.label.width = NULL, scalebar = TRUE, mat.labels = NULL,
   mat.label.height = NULL, mat.label.colors = "black",
   mat.col.order = NULL, mat.hclust = FALSE, mat.phylo = NULL, ...)
 }

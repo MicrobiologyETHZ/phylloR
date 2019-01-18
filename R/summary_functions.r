@@ -27,7 +27,7 @@
 #' @examples
 #' None
 
-treatmap <- function(phylo,mat,mask=NULL,mask.color="lightgrey",overlay=NULL,aspect.ratio=1/exp(1),tip.labels=NULL,tip.colors=NULL,z.cols=NULL,z.res=NULL,tip.label.width=NULL,scalebar=True,mat.labels=NULL,mat.label.height=NULL,mat.label.colors="black",mat.col.order=NULL,mat.hclust=FALSE,mat.phylo=NULL,...){
+treatmap <- function(phylo,mat,mask=NULL,mask.color="lightgrey",overlay=NULL,aspect.ratio=1/exp(1),tip.labels=NULL,tip.colors=NULL,z.cols=NULL,z.res=NULL,tip.label.width=NULL,scalebar=TRUE,mat.labels=NULL,mat.label.height=NULL,mat.label.colors="black",mat.col.order=NULL,mat.hclust=FALSE,mat.phylo=NULL,...){
     # Check if the matrix is one- or two-sided
     if(sign(min(mat,na.rm=T))==sign(max(mat,na.rm=T))){
         matType <- 1

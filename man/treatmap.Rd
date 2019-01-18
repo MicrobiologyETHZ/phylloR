@@ -7,9 +7,9 @@
 treatmap(phylo, mat, mask = NULL, mask.color = "lightgrey",
   overlay = NULL, aspect.ratio = 1/exp(1), tip.labels = NULL,
   tip.colors = NULL, z.cols = NULL, z.res = NULL,
-  tip.label.width = NULL, mat.label.height = NULL, scalebar = T,
-  mat.label.color = "black", mat.col.order = NULL,
-  mat.hclust = FALSE, ...)
+  tip.label.width = NULL, scalebar = T, mat.labels = NULL,
+  mat.label.height = NULL, mat.label.colors = "black",
+  mat.col.order = NULL, mat.hclust = FALSE, mat.phylo = NULL, ...)
 }
 \arguments{
 \item{phylo}{An object of class "phylo".}
@@ -34,15 +34,19 @@ treatmap(phylo, mat, mask = NULL, mask.color = "lightgrey",
 
 \item{tip.label.width}{A numeric indicating how much space to put between the heatmap and tree for plotting the labels, defaulting to 20% of the plotted tree width.}
 
-\item{mat.label.height}{A numeric indicating how much space to leave above the heatmap for column labels.}
-
 \item{scalebar}{A logical indicating whether or not to include a scalebar in the plot.}
 
-\item{mat.label.color}{A single color or vector of colors for the column labels of the heatmap.}
+\item{mat.labels}{A vector of strings to label the columns of the heatmap; defaults to the column names of "mat".}
 
-\item{mat.col.order}{A numeric vector indicating the order in which to plot the columns of the heatmap.}
+\item{mat.label.height}{A numeric indicating how much space to leave above the heatmap for column labels.}
 
-\item{mat.hclust}{A logical indicating whether or not to hierarchically cluster the columns of the heatmap; ignored if mat.col.order is provided.}
+\item{mat.label.colors}{A single color or vector of colors for the column labels of the heatmap.}
+
+\item{mat.col.order}{A numeric vector indicating the order in which to plot the columns of the heatmap; ignored if mat.phylo is provided.}
+
+\item{mat.hclust}{A logical indicating whether or not to hierarchically cluster the columns of the heatmap; ignored if mat.col.order or mat.phylo is provided.}
+
+\item{mat.phylo}{An object of class "phylo" which is used to order the columns of the heatmap.}
 }
 \value{
 None

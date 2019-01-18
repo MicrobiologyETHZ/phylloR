@@ -11,11 +11,13 @@
 #' @param z.cols A vector of colors for the z-axis of the heatmap, see details for the default.
 #' @param z.res A resolution for the color vector of the z-axis if automatically calculated.
 #' @param tip.label.width A numeric indicating how much space to put between the heatmap and tree for plotting the labels, defaulting to 20% of the plotted tree width.
-#' @param mat.label.height A numeric indicating how much space to leave above the heatmap for column labels.
 #' @param scalebar A logical indicating whether or not to include a scalebar in the plot.
-#' @param mat.label.color A single color or vector of colors for the column labels of the heatmap.
-#' @param mat.col.order A numeric vector indicating the order in which to plot the columns of the heatmap.
-#' @param mat.hclust A logical indicating whether or not to hierarchically cluster the columns of the heatmap; ignored if mat.col.order is provided.
+#' @param mat.labels A vector of strings to label the columns of the heatmap; defaults to the column names of "mat".
+#' @param mat.label.height A numeric indicating how much space to leave above the heatmap for column labels.
+#' @param mat.label.colors A single color or vector of colors for the column labels of the heatmap.
+#' @param mat.col.order A numeric vector indicating the order in which to plot the columns of the heatmap; ignored if mat.phylo is provided.
+#' @param mat.hclust A logical indicating whether or not to hierarchically cluster the columns of the heatmap; ignored if mat.col.order or mat.phylo is provided.
+#' @param mat.phylo An object of class "phylo" which is used to order the columns of the heatmap.
 #' @details
 #' The default color vector for the z-axis is generated automatically if not provided. Firstly it is determined whether "mat" contains both positive and negative values. If it is one-sided then a vector of 32 colors is made with "colorRampPalette", between white and blue. If it is two-sided, a vector of 31 colors is made between blue, white and red. The argument "z.res" can be used to fix the number of colors in the vector, though it will still generate an odd number if the heatmap is two-sided. Providing "z.cols" will ignore all these determinations and split the color vector evenly between the heatmap's minimum and maximum.
 #' @keywords None
@@ -25,7 +27,7 @@
 #' @examples
 #' None
 
-treatmap <- function(phylo,mat,mask=NULL,mask.color="lightgrey",overlay=NULL,aspect.ratio=1/exp(1),tip.labels=NULL,tip.colors=NULL,z.cols=NULL,z.res=NULL,tip.label.width=NULL,mat.label.height=NULL,scalebar=T,mat.label.color="black",mat.col.order=NULL,mat.hclust=FALSE,...){
+treatmap <- function(phylo,mat,mask=NULL,mask.color="lightgrey",overlay=NULL,aspect.ratio=1/exp(1),tip.labels=NULL,tip.colors=NULL,z.cols=NULL,z.res=NULL,tip.label.width=NULL,scalebar=T,mat.labels=NULL,mat.label.height=NULL,mat.label.colors="black",mat.col.order=NULL,mat.hclust=FALSE,mat.phylo=NULL,...){
     # Check if the matrix is one- or two-sided
     if(sign(min(mat,na.rm=T))==sign(max(mat,na.rm=T))){
         matType <- 1
@@ -51,8 +53,16 @@ treatmap <- function(phylo,mat,mask=NULL,mask.color="lightgrey",overlay=NULL,asp
     if(length(z.cols)!=z.res){
         stop("Colors chosen do not cover the given resolution!")
     }
+    # If no labels are given, default to existing labels
     if(is.null(tip.labels)){
         tip.labels <- phylo$tip.label
+    }
+    if(is.null(mat.labels)){
+        if(!is.null(mat.phylo)){
+            mat.labels <- mat.phylo$tip.label
+        }else{
+            mat.labels <- colnames(mat)
+        }
     }
 
     # Determine tree size in coordinates and rescale
@@ -75,8 +85,10 @@ treatmap <- function(phylo,mat,mask=NULL,mask.color="lightgrey",overlay=NULL,asp
     plotWidth <- phyloWidth+matWidth+tip.label.width
     plotHeight <- phyloHeight+mat.label.height
 
-    # Use mat.col.order preferentially over mat.hclust to hierarchically cluster the matrix columns
-    if(!is.null(mat.col.order)){
+    # Use mat.phylo if given, otherwise mat.col.order preferentially over mat.hclust to hierarchically cluster the matrix columns
+    if(!is.null(mat.phylo)){
+        hc = list(order=match(mat.phylo$tip.label,colnames(fc6c)))
+    }else if(!is.null(mat.col.order)){
         hc = list(order=mat.col.order)
     }else if(mat.hclust){
         d = dist(t(mat))
@@ -119,7 +131,7 @@ treatmap <- function(phylo,mat,mask=NULL,mask.color="lightgrey",overlay=NULL,asp
     mat.colors = z.cols[cells]
     mat.colors[!mask] = mask.color
     rect(rep(phyloWidth+tip.label.width+(0:(ncol(mat)-1)),each=nrow(mat)),0.5+rep(0:(nrow(mat)-1),ncol(mat)),rep(phyloWidth+tip.label.width+(1:ncol(mat)),each=nrow(mat)),0.5+rep(1:nrow(mat),ncol(mat)),col=mat.colors)
-    text(phyloWidth+tip.label.width+(0.5+0:(ncol(mat)-1)),nrow(mat)+1,colnames(mat),adj=c(0,0.5),srt=90,col=mat.label.color[hc$order])
+    text(phyloWidth+tip.label.width+(0.5+0:(ncol(mat)-1)),nrow(mat)+1,mat.labels,adj=c(0,0.5),srt=90,col=mat.label.colors[hc$order])
 
     # Add the overlay if requested
     if(!is.null(overlay)){
@@ -138,8 +150,10 @@ treatmap <- function(phylo,mat,mask=NULL,mask.color="lightgrey",overlay=NULL,asp
         }
     }
 
-    # Add a dendrogram if columns were clustered
-    if(mat.hclust){
+    # Add a dendrogram if mat.phylo was provided or columns were clustered
+    if(!is.null(mat.phylo)){
+        draw.phylo(0.5+phyloWidth+tip.label.width,nrow(mat)+mat.label.height/2,0.5+phyloWidth+tip.label.width+ncol(mat)-1,nrow(mat)+mat.label.height,mat.phylo,direction="d")
+    }else if(mat.hclust){
         draw.phylo(0.5+phyloWidth+tip.label.width,nrow(mat)+mat.label.height/2,0.5+phyloWidth+tip.label.width+ncol(mat)-1,nrow(mat)+mat.label.height,as.phylo(hc),direction="d")
     }
 }

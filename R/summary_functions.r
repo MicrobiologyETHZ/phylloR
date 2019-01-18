@@ -10,7 +10,7 @@
 #' @param tip.colors A single color or vector of colors for the tip labels.
 #' @param z.cols A vector of colors for the z-axis of the heatmap, see details for the default.
 #' @param z.res A resolution for the color vector of the z-axis if automatically calculated.
-#' @param tip.label.width A numeric indicating how much space to put between the heatmap and tree for plotting the labels, defaulting to 20% of the plotted tree width.
+#' @param tip.label.width A numeric indicating how much space to put between the heatmap and tree for plotting the labels, defaulting to 20\% of the plotted tree width.
 #' @param scalebar A logical indicating whether or not to include a scalebar in the plot.
 #' @param mat.labels A vector of strings to label the columns of the heatmap; defaults to the column names of "mat".
 #' @param mat.label.height A numeric indicating how much space to leave above the heatmap for column labels.
@@ -27,7 +27,7 @@
 #' @examples
 #' None
 
-treatmap <- function(phylo,mat,mask=NULL,mask.color="lightgrey",overlay=NULL,aspect.ratio=1/exp(1),tip.labels=NULL,tip.colors=NULL,z.cols=NULL,z.res=NULL,tip.label.width=NULL,scalebar=T,mat.labels=NULL,mat.label.height=NULL,mat.label.colors="black",mat.col.order=NULL,mat.hclust=FALSE,mat.phylo=NULL,...){
+treatmap <- function(phylo,mat,mask=NULL,mask.color="lightgrey",overlay=NULL,aspect.ratio=1/exp(1),tip.labels=NULL,tip.colors=NULL,z.cols=NULL,z.res=NULL,tip.label.width=NULL,scalebar=True,mat.labels=NULL,mat.label.height=NULL,mat.label.colors="black",mat.col.order=NULL,mat.hclust=FALSE,mat.phylo=NULL,...){
     # Check if the matrix is one- or two-sided
     if(sign(min(mat,na.rm=T))==sign(max(mat,na.rm=T))){
         matType <- 1

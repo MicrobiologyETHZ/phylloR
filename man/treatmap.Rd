@@ -7,7 +7,7 @@
 treatmap(phylo, mat, mask = NULL, mask.color = "lightgrey",
   overlay = NULL, aspect.ratio = 1/exp(1), tip.labels = NULL,
   tip.colors = NULL, z.cols = NULL, z.res = NULL,
-  tip.label.width = NULL, scalebar = T, mat.labels = NULL,
+  tip.label.width = NULL, scalebar = True, mat.labels = NULL,
   mat.label.height = NULL, mat.label.colors = "black",
   mat.col.order = NULL, mat.hclust = FALSE, mat.phylo = NULL, ...)
 }
@@ -32,7 +32,7 @@ treatmap(phylo, mat, mask = NULL, mask.color = "lightgrey",
 
 \item{z.res}{A resolution for the color vector of the z-axis if automatically calculated.}
 
-\item{tip.label.width}{A numeric indicating how much space to put between the heatmap and tree for plotting the labels, defaulting to 20% of the plotted tree width.}
+\item{tip.label.width}{A numeric indicating how much space to put between the heatmap and tree for plotting the labels, defaulting to 20\% of the plotted tree width.}
 
 \item{scalebar}{A logical indicating whether or not to include a scalebar in the plot.}
 

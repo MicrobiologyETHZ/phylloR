@@ -202,34 +202,35 @@ summariseResults <- function(cdsList){
 #' @examples
 #' None
 
-plotBipartiteSummary <- function(fcMatrix,pvMatrix,phylo=NULL,strainOrder=NULL,experiment.type="removal",tip.label.width=0.1,...){
+plotBipartiteSummary <- function(fcMatrix,pvMatrix,phylo=NULL,reduce.phylo=FALSE,leftOrder=NULL,rightOrder=NULL,experiment.type="removal",tip.label.width=0.1,...){
 #Try a version with thickness as fc, a pv cutoff, no color change, some alpha
 
-    if(is.null(strainOrder)){
+    if(is.null(leftOrder)){
         if(!is.null(phylo)){
-            strainOrder = phylo$tip.label
+            leftOrder = phylo$tip.label[phylo$tip.label%in%colnames(fcMatrix)]
+            rightOrder = phylo$tip.label
         }else{
-            strainOrder = rownames(fcMatrix)
+            leftOrder = colnames(fcMatrix)
+            rightOrder = rownames(fcMatrix)
         }
     }
 
     plot.new()
     plot.window(xlim=c(-1,1),ylim=c(1,nrow(fcMatrix)))
 
-    lineCols = colorRampPalette(c("blue","white","red"))(33)
+#    lineCols = colorRampPalette(c("blue","white","red"))(33)
 
-    fcMatrix <- fcMatrix[strainOrder,]
-    fcMax <- ceiling(max(abs(fcMatrix)))
-    fcBins <- seq(-fcMax,fcMax,length.out=33)
-    fcVals <- apply(fcMatrix,2,function(x) cut(x,fcBins,labels=F))
-
-    pvMatrix <- pvMatrix[strainOrder,]
-    pvBins <- c(0,1e-6,1e-5,1e-4,1e-3,5e-2,1)
-    pvVals <- 6-apply(pvMatrix,2,function(x) cut(x,pvBins,labels=F))
+    fcMatrix <- fcMatrix[rightOrder,leftOrder]
+    pvMatrix <- pvMatrix[rightOrder,leftOrder]
 
     if(!is.null(phylo)){
-        phyloL <- keep.tip(phylo,colnames(fcMatrix))
-        draw.phylo(-1,1,-0.75,Ntip(phyloL),phyloL,show.tip.label=T,...)
+        if(reduce.phylo){
+            phyloL <- keep.tip(phylo,colnames(fcMatrix))
+        }else{
+            phyloL <- phylo
+        }
+        yoffset <- (Ntip(phylo)-Ntip(phyloL))/2
+        draw.phylo(-1,1+yoffset,-0.75,Ntip(phyloL)+yoffset,phyloL,show.tip.label=T,...)
         draw.phylo(0.75,1,1,Ntip(phylo),phylo,direction="l",show.tip.label=T,...)
     }else{
         text(-0.75,1:nrow(fcMatrix),rownames(fcMatrix),pos=2,col=strainCols)
@@ -240,13 +241,12 @@ plotBipartiteSummary <- function(fcMatrix,pvMatrix,phylo=NULL,strainOrder=NULL,e
     for(i in 1:nrow(fcMatrix)){
         for(j in 1:ncol(fcMatrix)){
             s = which(rownames(fcMatrix)==colnames(fcMatrix)[j])
-            p = matrix(c(-0.75+tip.label.width,0,0,0.75-tip.label.width,j,j,i,i),ncol=2)
+            p = matrix(c(-0.75+tip.label.width,0,0,0.75-tip.label.width,j+yoffset,j+yoffset,i,i),ncol=2)
             if((i!=s) & (pvMatrix[i,j]<0.05)){
                 lines(bezier(t,p),col=paste(c("#0000FF","#000000","#FF0000")[sign(fcMatrix[i,j])+2],"77",sep=""),lwd=abs(fcMatrix[i,j]))
             }
         }
     }
-    return(count)
 }
 
 #' Function to construct an igraph network from fold-change and p-value matrices

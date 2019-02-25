@@ -65,7 +65,7 @@ makeCDS <- function(counts,meta,include=NULL,exclude=NULL,foi,ftc=NULL,title=NUL
     }
     dds <- DESeq(dds)
     results <- as.data.frame(results(dds))
-    
+
     # Make compatible data set
     cds <- list(counts=counts,meta=meta,foi=foi,ftc=ftc,title=title,legend=legend,dds=dds,results=results)
     return(cds)
@@ -79,6 +79,8 @@ makeCDS <- function(counts,meta,include=NULL,exclude=NULL,foi,ftc=NULL,title=NUL
 #' @param cutoff A p-value cutoff to determine which strains will be included individually in the plot.
 #' @param rowLabs A vector of names for the strains of interest, for plotting.
 #' @param subtitle A subtitle for the plot.
+#' @param cols A vector of 2 colours for the points.
+#' @param showLegend A logical indicating whether or not to show a legend.
 #' @details
 #' None.
 #' @keywords phylloR
@@ -88,7 +90,7 @@ makeCDS <- function(counts,meta,include=NULL,exclude=NULL,foi,ftc=NULL,title=NUL
 #' @examples
 #' None
 
-plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=1:2){
+plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=1:2,showLegend=TRUE){
     if(is.null(soi)){
         soi = rownames(cds$counts)
     }
@@ -101,7 +103,9 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
         title = paste(cds$title,subtitle,sep="\n")
     }
 
-    par(mar=0.1+c(6,4,4,9),xpd=T)
+    if(showLegend){
+        par(mar=0.1+c(6,4,4,9),xpd=T)
+    }
 
     nct <- assay(varianceStabilizingTransformation(cds$dds,blind=F))
     nct <- t(nct)[,soi]
@@ -141,11 +145,13 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
         text(pca$rotation[rownames(top),1]*15,pca$rotation[rownames(top),2]*15,top$label,col=c("blue","white","red")[sign(top[,2])+2])
     }
 
-    if(!is.null(cds$ftc)){
-        pairs = expand.grid(cds$legend,levels(cds$meta[,cds$ftc]))
-        legend("topleft",inset=c(1.01,0),legend=apply(pairs,1,paste,collapse=" "),pch=14+as.numeric(pairs[,2]),col=rep(cols,length(levels(cds$meta[,cds$ftc]))))
-    }else{
-        legend("topleft",inset=c(1.01,0),legend=cds$legend,pch=16,col=cols)
+    if(showLegend){
+        if(!is.null(cds$ftc)){
+            pairs = expand.grid(cds$legend,levels(cds$meta[,cds$ftc]))
+            legend("topleft",inset=c(1.01,0),legend=apply(pairs,1,paste,collapse=" "),pch=14+as.numeric(pairs[,2]),col=rep(cols,length(levels(cds$meta[,cds$ftc]))))
+        }else{
+            legend("topleft",inset=c(1.01,0),legend=cds$legend,pch=16,col=cols)
+        }
     }
     return(list(pca=pca,stats=adn))
 }
@@ -168,7 +174,7 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
 #' None
 
 # Barplot of the subset divided by foi
-plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=palette()){
+plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=1:2,nBars=NULL){
     if(is.null(soi)){
                 soi = rownames(cds$counts)
     }
@@ -187,8 +193,12 @@ plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=
     ra <- t(100*counts/apply(counts,1,sum))
     ra <- ra[(cds$results[soi,]$padj<cutoff) & !is.na(cds$results[soi,]$padj),,drop=F]
     if(nrow(ra)<1){
+        plot.new()
         cat("No significant changes to plot\n")
         return()
+    }
+    if(is.null(nBars)){
+        nBars = 2*nrow(ra)
     }
     rowLabs <- rowLabs[(cds$results[soi,]$padj<cutoff) & !is.na(cds$results[soi,]$padj)]
 
@@ -202,7 +212,7 @@ plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=
     stats <- lapply(ras,function(ra) apply(ra,1,function(x) boxplot(x[x>0],plot=F))) # VIOLIN PLOTS?
     zeros <- lapply(ras,function(ra) apply(ra,1,function(x) sum(x==0)))
 
-    plot(1,type="n",xlim=c(0.5,(2*nrow(ra))+0.5),ylim=c(1e-3,1e2),log="y",xlab="",ylab="Relative Abundance",xaxt="none",yaxt="none",main=title)
+    plot(1,type="n",xlim=c(0.5,nBars+0.5),ylim=c(1e-3,1e2),log="y",xlab="",ylab="Relative Abundance",xaxt="none",yaxt="none",main=title)
     abline(h=c(1e-2,1e-1,1e0,1e1,1e2),col="grey")
     axis(1,at=2*(1:nrow(ra))-0.5,labels=rowLabs,las=2)
     axis(2,at=c(1e-3,1e-2,1e-1,1e0,1e1,1e2),labels=c("Undetected","0.01%","0.1%","1%","10%","100%"))
@@ -214,12 +224,12 @@ plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=
         segments(rep(i,2),s$stats[c(1,4)],rep(i,2),s$stats[c(2,5)])
         segments(i-0.4,s$stats[3],i+0.4,s$stats[3],lwd=2)
         points(rep(i,length(s$out)),s$out,pch=20,col=cols[2-(i%%2)])
-        points(i,1e-3,cex=2*sqrt(z/nrow(ras[[2-(i%%2)]])),col=cols[2-(i%%2)],pch=20)
+        points(i,1e-3,cex=2*sqrt(z/nBars),col=cols[2-(i%%2)],pch=20)
         text(i,1.3e-3,z)
     }
 
     for(i in 1:nrow(ra)){
-        text((2*i)-0.5,3e-3,paste("Fold Change: x",formatC(2^cds$results[rownames(ra)[i],]$log2FoldChange,digits=3),"\np-value: ",formatC(cds$results[rownames(ra)[i],]$padj,digits=3),sep=""),cex=0.5)
+        text((2*i)-0.5,3e-3,paste("FC: x",formatC(2^cds$results[rownames(ra)[i],]$log2FoldChange,digits=3),"\nP: ",formatC(cds$results[rownames(ra)[i],]$padj,digits=3),sep=""),cex=0.5)
     }
 }
 

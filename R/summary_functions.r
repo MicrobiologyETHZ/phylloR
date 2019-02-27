@@ -131,7 +131,7 @@ treatmap <- function(phylo,mat,mask=NULL,mask.color="lightgrey",overlay=NULL,asp
     mat.colors = z.cols[cells]
     mat.colors[!mask] = mask.color
     rect(rep(phyloWidth+tip.label.width+(0:(ncol(mat)-1)),each=nrow(mat)),0.5+rep(0:(nrow(mat)-1),ncol(mat)),rep(phyloWidth+tip.label.width+(1:ncol(mat)),each=nrow(mat)),0.5+rep(1:nrow(mat),ncol(mat)),col=mat.colors)
-    text(phyloWidth+tip.label.width+(0.5+0:(ncol(mat)-1)),nrow(mat)+1,mat.labels,adj=c(0,0.5),srt=90,col=mat.label.colors[hc$order])
+    text(phyloWidth+tip.label.width+(0.5+0:(ncol(mat)-1)),nrow(mat)+1,mat.labels[hc$order],adj=c(0,0.5),srt=90,col=mat.label.colors[hc$order])
 
     # Add the overlay if requested
     if(!is.null(overlay)){

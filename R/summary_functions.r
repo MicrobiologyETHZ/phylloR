@@ -202,7 +202,7 @@ summariseResults <- function(cdsList){
 #' @examples
 #' None
 
-plotBipartiteSummary <- function(fcMatrix,pvMatrix,phylo=NULL,reduce.phylo=FALSE,leftOrder=NULL,rightOrder=NULL,experiment.type="removal",tip.label.width=0.1,...){
+plotBipartiteSummary <- function(fcMatrix,pvMatrix,phylo=NULL,reduce.phylo=FALSE,leftOrder=NULL,rightOrder=NULL,leftCols=NULL,rightCols=NULL,experiment.type="removal",tip.label.width=0.1,...){
 #Try a version with thickness as fc, a pv cutoff, no color change, some alpha
 
     if(is.null(leftOrder)){
@@ -218,10 +218,15 @@ plotBipartiteSummary <- function(fcMatrix,pvMatrix,phylo=NULL,reduce.phylo=FALSE
     plot.new()
     plot.window(xlim=c(-1,1),ylim=c(1,nrow(fcMatrix)))
 
-#    lineCols = colorRampPalette(c("blue","white","red"))(33)
-
     fcMatrix <- fcMatrix[rightOrder,leftOrder]
     pvMatrix <- pvMatrix[rightOrder,leftOrder]
+
+    if(is.null(leftCols)){
+        leftCols="black"
+    }
+    if(is.null(rightCols)){
+        rightCols="black"
+    }
 
     if(!is.null(phylo)){
         if(reduce.phylo){
@@ -230,11 +235,11 @@ plotBipartiteSummary <- function(fcMatrix,pvMatrix,phylo=NULL,reduce.phylo=FALSE
             phyloL <- phylo
         }
         yoffset <- (Ntip(phylo)-Ntip(phyloL))/2
-        draw.phylo(-1,1+yoffset,-0.75,Ntip(phyloL)+yoffset,phyloL,show.tip.label=T,...)
-        draw.phylo(0.75,1,1,Ntip(phylo),phylo,direction="l",show.tip.label=T,...)
+        draw.phylo(-1,1+yoffset,-0.75,Ntip(phyloL)+yoffset,phyloL,show.tip.label=T,tip.color=leftCols)
+        draw.phylo(0.75,1,1,Ntip(phylo),phylo,direction="l",show.tip.label=T,tip.color=rightCols)
     }else{
-        text(-0.75,1:nrow(fcMatrix),rownames(fcMatrix),pos=2,col=strainCols)
-        text(0.75,1:nrow(fcMatrix),rownames(fcMatrix),pos=4,col=strainCols)
+        text(-0.75,1:nrow(fcMatrix),rownames(fcMatrix),pos=2,col=leftCols)
+        text(0.75,1:nrow(fcMatrix),rownames(fcMatrix),pos=4,col=rightCols)
     }
 
     t = seq(0,1,length.out=101)

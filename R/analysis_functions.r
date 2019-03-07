@@ -90,7 +90,7 @@ makeCDS <- function(counts,meta,include=NULL,exclude=NULL,foi,ftc=NULL,title=NUL
 #' @examples
 #' None
 
-plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=1:2,showLegend=TRUE){
+plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=1:2,showLegend=TRUE,showArrows=TRUE){
     if(is.null(soi)){
         soi = rownames(cds$counts)
     }
@@ -134,15 +134,17 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
             )
     }
 
-    res <- cds$results[soi,]
-    res <- cbind(res,label=rowLabs)
-    res <- res[order(res$padj),]
-    res <- res[res$padj<cutoff & !is.na(res$padj),,drop=F]
-    if(nrow(res)>0){
-        ntop <- min(nrow(res),3)
-        top <- res[1:ntop,]
-        arrows(rep(0,ntop),rep(0,ntop),pca$rotation[rownames(top),1]*10,pca$rotation[rownames(top),2]*10,length=0.1,col=c("blue","white","red")[sign(top[,2])+2])
-        text(pca$rotation[rownames(top),1]*15,pca$rotation[rownames(top),2]*15,top$label,col=c("blue","white","red")[sign(top[,2])+2])
+    if(showArrows){
+        res <- cds$results[soi,]
+        res <- cbind(res,label=rowLabs)
+        res <- res[order(res$padj),]
+        res <- res[res$padj<cutoff & !is.na(res$padj),,drop=F]
+        if(nrow(res)>0){
+            ntop <- min(nrow(res),3)
+            top <- res[1:ntop,]
+            arrows(rep(0,ntop),rep(0,ntop),pca$rotation[rownames(top),1]*10,pca$rotation[rownames(top),2]*10,length=0.1,col=c("blue","white","red")[sign(top[,2])+2])
+            text(pca$rotation[rownames(top),1]*15,pca$rotation[rownames(top),2]*15,top$label,col=c("blue","white","red")[sign(top[,2])+2])
+        }
     }
 
     if(showLegend){

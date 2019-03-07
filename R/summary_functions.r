@@ -230,12 +230,16 @@ plotBipartiteSummary <- function(fcMatrix,pvMatrix,leftPhylo=NULL,rightPhylo=NUL
     if(is.null(rightLabs)){
         rightLabs <- rownames(fcMatrix)
     }
+    names(leftLabs) <- colnames(fcMatrix)
+    names(rightLabs) <- rownames(fcMatrix)
 
-    fcMatrix <- fcMatrix[rightOrder,leftOrder]
-    pvMatrix <- pvMatrix[rightOrder,leftOrder]
 
-    plot.new()
-    plot.window(xlim=c(-1,1),ylim=c(1,nrow(fcMatrix)))
+    if(!experiment.type%in%c("removal","addition")){
+        stop("Experiment type must be one of \"removal\" or \"addition\"")
+    }
+    if(experiment.type=="removal"){
+        fcMatrix <- -fcMatrix
+    }
 
     if(is.null(leftCols)){
         leftCols="black"
@@ -243,17 +247,28 @@ plotBipartiteSummary <- function(fcMatrix,pvMatrix,leftPhylo=NULL,rightPhylo=NUL
     if(is.null(rightCols)){
         rightCols="black"
     }
+    names(leftCols) <- colnames(fcMatrix)
+    names(rightCols) <- rownames(fcMatrix)
+
+    fcMatrix <- fcMatrix[rightOrder,leftOrder]
+    pvMatrix <- pvMatrix[rightOrder,leftOrder]
+
+    par(mar=c(0,0,0,0)+0.1)
+    plot.new()
+    plot.window(xlim=c(-1,1),ylim=c(1,nrow(fcMatrix)))
 
     if(!is.null(leftPhylo)){
         lyoffset <- (nrow(fcMatrix)-Ntip(leftPhylo))/2
-        draw.phylo(-1,1+lyoffset,-0.75,Ntip(leftPhylo)+lyoffset,leftPhylo,direction="r",show.tip.label=T,tip.color=leftCols[leftOrder])
+        draw.phylo(-1,1+lyoffset,-0.75,Ntip(leftPhylo)+lyoffset,leftPhylo,direction="r",show.tip.label=F)
+        text(-0.75,1:ncol(fcMatrix)+lyoffset,leftLabs[leftOrder],pos=4,col=leftCols[leftOrder])
     }else{
         lyoffset = max(0,nrow(fcMatrix)-ncol(fcMatrix))/2
         text(-0.75,1:ncol(fcMatrix)+lyoffset,leftLabs[leftOrder],pos=2,col=leftCols[leftOrder])
     }
     if(!is.null(rightPhylo)){
         ryoffset <- (nrow(fcMatrix)-Ntip(rightPhylo))/2
-        draw.phylo(0.75,1+ryoffset,1,Ntip(rightPhylo)+ryoffset,rightPhylo,direction="l",show.tip.label=T,tip.color=rightCols[rightOrder])
+        draw.phylo(0.75,1+ryoffset,1,Ntip(rightPhylo)+ryoffset,rightPhylo,direction="l",show.tip.label=F)
+        text(0.75,1:nrow(fcMatrix)+ryoffset,rightLabs[rightOrder],pos=2,col=rightCols[rightOrder])
     }else{
         ryoffset = max(0,ncol(fcMatrix)-nrow(fcMatrix))/2
         text(0.75,1:nrow(fcMatrix)+ryoffset,rightLabs[rightOrder],pos=4,col=rightCols[rightOrder])
@@ -265,7 +280,7 @@ plotBipartiteSummary <- function(fcMatrix,pvMatrix,leftPhylo=NULL,rightPhylo=NUL
             s = which(rownames(fcMatrix)==colnames(fcMatrix)[j])
             p = matrix(c(-0.75+tip.label.width,0,0,0.75-tip.label.width,j+lyoffset,j+lyoffset,i+ryoffset,i+ryoffset),ncol=2)
             if((i!=s) & (pvMatrix[i,j]<cutoff)){
-                lines(bezier(t,p),col=paste(c("#67001F", "#000000", "#053061")[sign(fcMatrix[i,j])+2],"77",sep=""),lwd=abs(fcMatrix[i,j]))
+                lines(bezier(t,p),col=paste(c("#2166AC","#FFFFFF","#B2182B")[sign(fcMatrix[i,j])+2],"77",sep=""),lwd=abs(fcMatrix[i,j]))
             }
         }
     }

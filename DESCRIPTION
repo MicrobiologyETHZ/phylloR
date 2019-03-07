@@ -15,7 +15,8 @@ Depends:
     plotrix,
     DESeq2,
     vegan,
-    igraph
+    igraph,
+    bezier
 Remotes: cmfield/apextra
 License: GPL-3
 Encoding: UTF-8

@@ -186,15 +186,21 @@ summariseResults <- function(cdsList){
 }
 
 #' Function to plot a bipartite graph to summarise strain-strain interactions.
-#' @param fcMatrix A matrix of fold changes where the rows are labelled with the strains affected and the columns with the strains either added or removed from the core experiment.
+#' @param fcMatrix A matrix of fold changes where the rows are labelled with the affected strains and the columns with the affector strains.
 #' @param pvMatrix A matrix of p-values matching "fcMatrix".
-#' @param phylo An optional phylo object describing the phylogeny of the strains.
-#' @param strainOrder An optional vector of character strings to place the strains in a particular order.
+#' @param leftPhylo An optional phylo object describing the phylogeny of the affector strains.
+#' @param rightPhylo An optional phylo object describing the affected strains.
+#' @param leftOrder An optional vector of character strings to place the affector strains in a particular order.
+#' @param rightOrder An optional vector of character strings to place the affected strains in a particular order.
+#' @param leftLabs An optional vector of character strings to label the affector strains.
+#' @param rightLabs An optional vector of character strings to label the affected strains.
+#' @param leftCols An optional vector of colors for the affector strain labels.
+#' @param rightCols An optional vector of colors for the affected strain labels.
 #' @param experiment.type A character string that is either "removal" or "addition" to describe the nature of the perturbations to the core experiment.
 #' @param tip.label.width A numeric to indicate how much space should be placed between the tips of the tree (if provided) and graph lines.
-#' @param ... Other arguments passed to "draw.phylo" from the "apextra" package.
+#' @param cutoff A numeric to specify a p-value cutoff above which lines will not be plotted.
 #' @details
-#' The order in which the strains appear is determined by "strainOrder" preferentially, otherwise the order of the tips in "phylo", and otherwise as they are given in "fcMatrix".
+#' The design of the bipartite graph is to show the affector strains on the left, with lines connecting them to affected strains on the right.
 #' @keywords None
 #' @return None
 #' @export
@@ -202,24 +208,34 @@ summariseResults <- function(cdsList){
 #' @examples
 #' None
 
-plotBipartiteSummary <- function(fcMatrix,pvMatrix,phylo=NULL,reduce.phylo=FALSE,leftOrder=NULL,rightOrder=NULL,leftCols=NULL,rightCols=NULL,experiment.type="removal",tip.label.width=0.1,...){
-#Try a version with thickness as fc, a pv cutoff, no color change, some alpha
-
+plotBipartiteSummary <- function(fcMatrix,pvMatrix,leftPhylo=NULL,rightPhylo=NULL,leftOrder=NULL,rightOrder=NULL,leftLabs=NULL,rightLabs=NULL,leftCols=NULL,rightCols=NULL,experiment.type="removal",tip.label.width=0.1,cutoff=0.05){
     if(is.null(leftOrder)){
-        if(!is.null(phylo)){
-            leftOrder = phylo$tip.label[phylo$tip.label%in%colnames(fcMatrix)]
-            rightOrder = phylo$tip.label
+        if(!is.null(leftPhylo)){
+            leftOrder = leftPhylo$tip.label[leftPhylo$tip.label%in%colnames(fcMatrix)]
         }else{
             leftOrder = colnames(fcMatrix)
+        }
+    }
+    if(is.null(rightOrder)){
+        if(!is.null(rightPhylo)){
+            rightOrder = rightPhylo$tip.label[rightPhylo$tip.label%in%rownames(fcMatrix)]
+        }else{
             rightOrder = rownames(fcMatrix)
         }
     }
 
-    plot.new()
-    plot.window(xlim=c(-1,1),ylim=c(1,nrow(fcMatrix)))
+    if(is.null(leftLabs)){
+        leftLabs <- colnames(fcMatrix)
+    }
+    if(is.null(rightLabs)){
+        rightLabs <- rownames(fcMatrix)
+    }
 
     fcMatrix <- fcMatrix[rightOrder,leftOrder]
     pvMatrix <- pvMatrix[rightOrder,leftOrder]
+
+    plot.new()
+    plot.window(xlim=c(-1,1),ylim=c(1,nrow(fcMatrix)))
 
     if(is.null(leftCols)){
         leftCols="black"
@@ -228,27 +244,28 @@ plotBipartiteSummary <- function(fcMatrix,pvMatrix,phylo=NULL,reduce.phylo=FALSE
         rightCols="black"
     }
 
-    if(!is.null(phylo)){
-        if(reduce.phylo){
-            phyloL <- keep.tip(phylo,colnames(fcMatrix))
-        }else{
-            phyloL <- phylo
-        }
-        yoffset <- (Ntip(phylo)-Ntip(phyloL))/2
-        draw.phylo(-1,1+yoffset,-0.75,Ntip(phyloL)+yoffset,phyloL,show.tip.label=T,tip.color=leftCols)
-        draw.phylo(0.75,1,1,Ntip(phylo),phylo,direction="l",show.tip.label=T,tip.color=rightCols)
+    if(!is.null(leftPhylo)){
+        lyoffset <- (nrow(fcMatrix)-Ntip(leftPhylo))/2
+        draw.phylo(-1,1+lyoffset,-0.75,Ntip(leftPhylo)+lyoffset,leftPhylo,direction="r",show.tip.label=T,tip.color=leftCols[leftOrder])
     }else{
-        text(-0.75,1:nrow(fcMatrix),rownames(fcMatrix),pos=2,col=leftCols)
-        text(0.75,1:nrow(fcMatrix),rownames(fcMatrix),pos=4,col=rightCols)
+        lyoffset = max(0,nrow(fcMatrix)-ncol(fcMatrix))/2
+        text(-0.75,1:ncol(fcMatrix)+lyoffset,leftLabs[leftOrder],pos=2,col=leftCols[leftOrder])
+    }
+    if(!is.null(rightPhylo)){
+        ryoffset <- (nrow(fcMatrix)-Ntip(rightPhylo))/2
+        draw.phylo(0.75,1+ryoffset,1,Ntip(rightPhylo)+ryoffset,rightPhylo,direction="l",show.tip.label=T,tip.color=rightCols[rightOrder])
+    }else{
+        ryoffset = max(0,ncol(fcMatrix)-nrow(fcMatrix))/2
+        text(0.75,1:nrow(fcMatrix)+ryoffset,rightLabs[rightOrder],pos=4,col=rightCols[rightOrder])
     }
 
     t = seq(0,1,length.out=101)
     for(i in 1:nrow(fcMatrix)){
         for(j in 1:ncol(fcMatrix)){
             s = which(rownames(fcMatrix)==colnames(fcMatrix)[j])
-            p = matrix(c(-0.75+tip.label.width,0,0,0.75-tip.label.width,j+yoffset,j+yoffset,i,i),ncol=2)
-            if((i!=s) & (pvMatrix[i,j]<0.05)){
-                lines(bezier(t,p),col=paste(c("#0000FF","#000000","#FF0000")[sign(fcMatrix[i,j])+2],"77",sep=""),lwd=abs(fcMatrix[i,j]))
+            p = matrix(c(-0.75+tip.label.width,0,0,0.75-tip.label.width,j+lyoffset,j+lyoffset,i+ryoffset,i+ryoffset),ncol=2)
+            if((i!=s) & (pvMatrix[i,j]<cutoff)){
+                lines(bezier(t,p),col=paste(c("#67001F", "#000000", "#053061")[sign(fcMatrix[i,j])+2],"77",sep=""),lwd=abs(fcMatrix[i,j]))
             }
         }
     }

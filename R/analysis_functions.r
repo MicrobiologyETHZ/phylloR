@@ -90,7 +90,7 @@ makeCDS <- function(counts,meta,include=NULL,exclude=NULL,foi,ftc=NULL,title=NUL
 #' @examples
 #' None
 
-plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=1:2,showLegend=TRUE,showArrows=TRUE){
+plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=1:2,showLegend=TRUE,showArrows=TRUE,showTitle=TRUE){
     if(is.null(soi)){
         soi = rownames(cds$counts)
     }
@@ -103,8 +103,14 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
         title = paste(cds$title,subtitle,sep="\n")
     }
 
-    if(showLegend){
-        par(mar=0.1+c(6,4,4,9),xpd=T)
+    if(showLegend & showTitle){
+        par(mar=0.1+c(7,4,4,9),xpd=T)
+    }else if(showLegend){
+        par(mar=0.1+c(7,4,1,9),xpd=T)
+    }else if(showTitle){
+        par(mar=0.1+c(7,4,4,1))
+    }else{
+        par(mar=0.1+c(7,4,1,1))
     }
 
     nct <- assay(varianceStabilizingTransformation(cds$dds,blind=F))
@@ -121,17 +127,17 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
              col=cols[cds$meta[,cds$foi]],
              pch=14+as.numeric(cds$meta[,cds$ftc]),
              main=title,
-             sub=paste("Effect Size: ",formatC(100*adn$aov.tab$R2[1],digits=3),"%; P-value: ",formatC(adn$aov.tab$Pr[1],3),sep=""),
              cex=1.5
             )
+        title(sub=paste("Effect Size: ",formatC(100*adn$aov.tab$R2[1],digits=3),"%; P-value: ",formatC(adn$aov.tab$Pr[1],3),sep=""),line=5)
     }else{
         plot(pca$x[,1:2],
              col=cols[cds$meta[,cds$foi]],
              pch=16,
              main=title,
-             sub=paste("Effect Size: ",formatC(100*adn$aov.tab$R2[1],digits=3),"%; P-value: ",formatC(adn$aov.tab$Pr[1],3),sep=""),
              cex=1.5
             )
+        title(sub=paste("Effect Size: ",formatC(100*adn$aov.tab$R2[1],digits=3),"%; P-value: ",formatC(adn$aov.tab$Pr[1],3),sep=""),line=5)
     }
 
     if(showArrows){

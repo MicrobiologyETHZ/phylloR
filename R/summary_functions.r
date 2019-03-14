@@ -280,7 +280,7 @@ plotBipartiteSummary <- function(fcMatrix,pvMatrix,leftPhylo=NULL,rightPhylo=NUL
             s = which(rownames(fcMatrix)==colnames(fcMatrix)[j])
             p = matrix(c(-0.75+tip.label.width,0,0,0.75-tip.label.width,j+lyoffset,j+lyoffset,i+ryoffset,i+ryoffset),ncol=2)
             if((i!=s) & (pvMatrix[i,j]<cutoff)){
-                lines(bezier(t,p),col=paste(c("#2166AC","#FFFFFF","#B2182B")[sign(fcMatrix[i,j])+2],"77",sep=""),lwd=abs(fcMatrix[i,j]))
+                lines(bezier(t,p),col=paste(c("#313695","#FFFFFF","#a50026")[sign(fcMatrix[i,j])+2],"77",sep=""),lwd=abs(fcMatrix[i,j]))
             }
         }
     }

@@ -125,7 +125,7 @@ treatmap <- function(phylo,mat,mask=NULL,mask.color="lightgrey",overlay=NULL,asp
         tip.colors=rainbow(Ntip(phylo))
     }
     plot(phylo,show.tip.label=F,x.lim=c(0,plotWidth),y.lim=c(-2*as.numeric(scalebar),plotHeight),...)
-    text(phyloWidth,pos=4,1:Ntip(phylo),tip.labels,col=tip.colors)
+    text(phyloWidth,pos=4,1:Ntip(phylo),parse(text=tip.labels),col=tip.colors)
 
     # Plot the heatmap
     mat.colors = z.cols[cells]

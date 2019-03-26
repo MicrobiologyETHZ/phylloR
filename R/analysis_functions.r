@@ -259,7 +259,7 @@ plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=
 #' None
 
 plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50){
-    if(!type%in%c("bar","violin")){
+    if(!type%in%c("bar","violin","points")){
         cat("Not a valid type of community plot\n")
         return()
     }
@@ -311,6 +311,8 @@ plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50){
                 segments(i-0.4,stats[[i]]$stats[3],i+0.4,stats[[i]]$stats[3],lwd=2)
                 #polygon(c(i-h$counts/max(h$counts*2),rev(i+h$counts/max(h$counts*2))),c(h$mids,rev(h$mids)),col=xcols[i])
             }
+        }else if(type=="points"){
+            points(rep(i,nrow(ncts)),ncts[,i],col=xcols[i])
         }
         points(i,1e-3,cex=4*zeros[i]/nrow(ncts),col=xcols[i],pch=20)
         text(i,1.3e-3,zeros[i])

@@ -312,7 +312,7 @@ plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50){
                 #polygon(c(i-h$counts/max(h$counts*2),rev(i+h$counts/max(h$counts*2))),c(h$mids,rev(h$mids)),col=xcols[i])
             }
         }else if(type=="points"){
-            points(rep(i,nrow(ncts)),ncts[,i],col=xcols[i])
+            points(rep(i,nrow(ncts)),ncts[,i],col=xcols[i],pch=20)
         }
         points(i,1e-3,cex=4*zeros[i]/nrow(ncts),col=xcols[i],pch=20)
         text(i,1.3e-3,zeros[i])

@@ -228,8 +228,8 @@ plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=
     for(i in 1:(2*nrow(ra))){
         s = stats[[2-(i%%2)]][[(i+(i%%2))/2]]
         z = zeros[[2-(i%%2)]][(i+(i%%2))/2]
-        if(nLowPoints){
-            points(rep(i,ncol(ra)),ra[i,],pch=20,col=cols[2-(i%%2)])
+        if(nLowPoints & ncol(ras[[2-(i%%2)]])<4){
+            points(rep(i,ncol(ras[[2-(i%%2)]])),ras[[2-(i%%2)]][(i+(i%%2))/2,],pch=20,col=cols[2-(i%%2)])
         }else{
             rect(i-0.4,s$stats[2],i+0.4,s$stats[4],col=cols[2-(i%%2)])
             segments(rep(i,2),s$stats[c(1,4)],rep(i,2),s$stats[c(2,5)])

@@ -182,7 +182,7 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
 #' None
 
 # Barplot of the subset divided by foi
-plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=1:2,nBars=NULL){
+plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=1:2,nBars=NULL,nLowPoints=TRUE){
     if(is.null(soi)){
                 soi = rownames(cds$counts)
     }
@@ -228,10 +228,14 @@ plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=
     for(i in 1:(2*nrow(ra))){
         s = stats[[2-(i%%2)]][[(i+(i%%2))/2]]
         z = zeros[[2-(i%%2)]][(i+(i%%2))/2]
-        rect(i-0.4,s$stats[2],i+0.4,s$stats[4],col=cols[2-(i%%2)])
-        segments(rep(i,2),s$stats[c(1,4)],rep(i,2),s$stats[c(2,5)])
-        segments(i-0.4,s$stats[3],i+0.4,s$stats[3],lwd=2)
-        points(rep(i,length(s$out)),s$out,pch=20,col=cols[2-(i%%2)])
+        if(nLowPoints){
+            points(rep(i,ncol(ra)),ra[i,],pch=20,col=cols[2-(i%%2)])
+        }else{
+            rect(i-0.4,s$stats[2],i+0.4,s$stats[4],col=cols[2-(i%%2)])
+            segments(rep(i,2),s$stats[c(1,4)],rep(i,2),s$stats[c(2,5)])
+            segments(i-0.4,s$stats[3],i+0.4,s$stats[3],lwd=2)
+            points(rep(i,length(s$out)),s$out,pch=20,col=cols[2-(i%%2)])
+        }
         points(i,1e-3,cex=2*sqrt(z/nBars),col=cols[2-(i%%2)],pch=20)
         text(i,1.3e-3,z)
     }

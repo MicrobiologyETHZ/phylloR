@@ -5,7 +5,7 @@
 \title{Function to plot the changes in the community at a strain level.}
 \usage{
 plotCommunityChanges(cds, soi = NULL, cutoff = 0.05, rowLabs = NULL,
-  subtitle = NULL, cols = palette())
+  subtitle = NULL, cols = 1:2, nBars = NULL, nLowPoints = TRUE)
 }
 \arguments{
 \item{cds}{A compatible data set produced by the makeCDS() function.}
@@ -19,6 +19,10 @@ plotCommunityChanges(cds, soi = NULL, cutoff = 0.05, rowLabs = NULL,
 \item{subtitle}{A subtitle for the plot.}
 
 \item{cols}{A vector of two colours for the bars}
+
+\item{nBars}{A numeric fixing the width of the plot to accommodate a certain number of bars}
+
+\item{nLowPoints}{A logical indicating whether or not plot individual points instead of a box-and-whisker when the number of points is less than 4}
 }
 \value{
 None.

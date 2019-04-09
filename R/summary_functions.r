@@ -290,10 +290,11 @@ plotBipartiteSummary <- function(fcMatrix,pvMatrix,leftPhylo=NULL,rightPhylo=NUL
 #' @param fcMatrix A matrix of fold changes where the rows are labelled with the strains affected and the columns with the strains either added or removed from the core experiment.
 #' @param pvMatrix A matrix of p-values matching "fcMatrix".
 #' @param cutoff A numeric indicating the p-value significance cutoff.
+#' @param type A string, either "removal" or "addition", indicating the sort of experiment being summarised.
 #' @details
 #' None
 #' @keywords None
-#' @return None
+#' @return An igraph network object.
 #' @export
 #' @author Chris Field <fieldc@@ethz.ch>
 #' @examples
@@ -314,7 +315,7 @@ igraphFromSummary <- function(fcMatrix,pvMatrix,cutoff,type="removal"){
         for(j in 1:ncol(fcMatrix)){
             if((pvMatrix[i,j]<cutoff) & (rownames(fcMatrix)[i]!=colnames(fcMatrix)[j])){
                 edgeList[[length(edgeList)+1]] <- c(colnames(fcMatrix)[j],rownames(fcMatrix)[i])
-                edgeAttrList[[length(edgeAttrList)+1]] <- c(sign(fcMatrix[i,j]),abs(fcMatrix[i,j]),pvMatrix[i,j])
+                edgeAttrList[[length(edgeAttrList)+1]] <- c(multiplier*sign(fcMatrix[i,j]),abs(fcMatrix[i,j]),pvMatrix[i,j])
             }
         }
     }

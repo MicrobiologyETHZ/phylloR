@@ -4,24 +4,38 @@
 \alias{plotBipartiteSummary}
 \title{Function to plot a bipartite graph to summarise strain-strain interactions.}
 \usage{
-plotBipartiteSummary(fcMatrix, pvMatrix, phylo = NULL,
-  strainOrder = NULL, experiment.type = "removal",
-  tip.label.width = 0.1, ...)
+plotBipartiteSummary(fcMatrix, pvMatrix, leftPhylo = NULL,
+  rightPhylo = NULL, leftOrder = NULL, rightOrder = NULL,
+  leftLabs = NULL, rightLabs = NULL, leftCols = NULL,
+  rightCols = NULL, experiment.type = "removal",
+  tip.label.width = 0.1, cutoff = 0.05)
 }
 \arguments{
-\item{fcMatrix}{A matrix of fold changes where the rows are labelled with the strains affected and the columns with the strains either added or removed from the core experiment.}
+\item{fcMatrix}{A matrix of fold changes where the rows are labelled with the affected strains and the columns with the affector strains.}
 
 \item{pvMatrix}{A matrix of p-values matching "fcMatrix".}
 
-\item{phylo}{An optional phylo object describing the phylogeny of the strains.}
+\item{leftPhylo}{An optional phylo object describing the phylogeny of the affector strains.}
 
-\item{strainOrder}{An optional vector of character strings to place the strains in a particular order.}
+\item{rightPhylo}{An optional phylo object describing the affected strains.}
+
+\item{leftOrder}{An optional vector of character strings to place the affector strains in a particular order.}
+
+\item{rightOrder}{An optional vector of character strings to place the affected strains in a particular order.}
+
+\item{leftLabs}{An optional vector of character strings to label the affector strains.}
+
+\item{rightLabs}{An optional vector of character strings to label the affected strains.}
+
+\item{leftCols}{An optional vector of colors for the affector strain labels.}
+
+\item{rightCols}{An optional vector of colors for the affected strain labels.}
 
 \item{experiment.type}{A character string that is either "removal" or "addition" to describe the nature of the perturbations to the core experiment.}
 
 \item{tip.label.width}{A numeric to indicate how much space should be placed between the tips of the tree (if provided) and graph lines.}
 
-\item{...}{Other arguments passed to "draw.phylo" from the "apextra" package.}
+\item{cutoff}{A numeric to specify a p-value cutoff above which lines will not be plotted.}
 }
 \value{
 None
@@ -30,7 +44,7 @@ None
 Function to plot a bipartite graph to summarise strain-strain interactions.
 }
 \details{
-The order in which the strains appear is determined by "strainOrder" preferentially, otherwise the order of the tips in "phylo", and otherwise as they are given in "fcMatrix".
+The design of the bipartite graph is to show the affector strains on the left, with lines connecting them to affected strains on the right.
 }
 \examples{
 None

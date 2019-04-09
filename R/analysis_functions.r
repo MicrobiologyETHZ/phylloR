@@ -81,10 +81,12 @@ makeCDS <- function(counts,meta,include=NULL,exclude=NULL,foi,ftc=NULL,title=NUL
 #' @param subtitle A subtitle for the plot.
 #' @param cols A vector of 2 colours for the points.
 #' @param showLegend A logical indicating whether or not to show a legend.
+#' @param showArrows A logical indicating whether or not to show the top 3 or fewer significant individual responses
+#' @param showTitle A logical indicating whether or not to show a plot title.
 #' @details
 #' None.
 #' @keywords phylloR
-#' @return The results of the adonis() function.
+#' @return The results of the PCA and the adonis() function.
 #' @export
 #' @author Chris Field <fieldc@@ethz.ch>
 #' @examples
@@ -172,6 +174,8 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
 #' @param rowLabs A vector of names for the strains of interest, for plotting.
 #' @param subtitle A subtitle for the plot.
 #' @param cols A vector of two colours for the bars
+#' @param nBars A numeric fixing the width of the plot to accommodate a certain number of bars
+#' @param nLowPoints A logical indicating whether or not plot individual points instead of a box-and-whisker when the number of points is less than 4
 #' @details
 #' None.
 #' @keywords phylloR

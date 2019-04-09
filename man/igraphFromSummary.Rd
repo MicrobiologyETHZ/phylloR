@@ -12,9 +12,11 @@ igraphFromSummary(fcMatrix, pvMatrix, cutoff, type = "removal")
 \item{pvMatrix}{A matrix of p-values matching "fcMatrix".}
 
 \item{cutoff}{A numeric indicating the p-value significance cutoff.}
+
+\item{type}{A string, either "removal" or "addition", indicating the sort of experiment being summarised.}
 }
 \value{
-None
+An igraph network object.
 }
 \description{
 Function to construct an igraph network from fold-change and p-value matrices

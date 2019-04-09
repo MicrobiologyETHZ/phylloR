@@ -5,7 +5,8 @@
 \title{Function to calculate and plot a PCA comparing sample groups at the whole community level.}
 \usage{
 plotPCA(cds, soi = NULL, perm = 100, cutoff = 0.05, rowLabs = NULL,
-  subtitle = NULL, cols = 1:2)
+  subtitle = NULL, cols = 1:2, showLegend = TRUE,
+  showArrows = TRUE, showTitle = TRUE)
 }
 \arguments{
 \item{cds}{A compatible data set produced by the makeCDS() function.}
@@ -19,9 +20,17 @@ plotPCA(cds, soi = NULL, perm = 100, cutoff = 0.05, rowLabs = NULL,
 \item{rowLabs}{A vector of names for the strains of interest, for plotting.}
 
 \item{subtitle}{A subtitle for the plot.}
+
+\item{cols}{A vector of 2 colours for the points.}
+
+\item{showLegend}{A logical indicating whether or not to show a legend.}
+
+\item{showArrows}{A logical indicating whether or not to show the top 3 or fewer significant individual responses}
+
+\item{showTitle}{A logical indicating whether or not to show a plot title.}
 }
 \value{
-The results of the adonis() function.
+The results of the PCA and the adonis() function.
 }
 \description{
 Function to calculate and plot a PCA comparing sample groups at the whole community level.

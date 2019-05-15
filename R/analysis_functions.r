@@ -252,7 +252,7 @@ plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=
 #' Function to produce a bar or violin plot of an individual community.
 #'
 #' @param counts A count table in which the rows are strains or OTUs and the columns are samples. The table should include only a single sample group.
-#' @param type Determines the plot style, either 'bar' or 'violin'.
+#' @param type Determines the plot style, either 'bar', 'violin', 'swarm', 'barswarm' or 'violinswarm'.
 #' @param xlabels  An optional vector of strain names, the default is to use the row names of the count table.
 #' @param xcols An optional vector of strain colours, the default is to use rainbow(). 
 #' @param res The resolution of the histograms used to create the violins for that plot style.
@@ -267,7 +267,7 @@ plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=
 #' None
 
 plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50){
-    if(!type%in%c("bar","violin","points")){
+    if(!type%in%c("bar","violin","points","swarm","barswarm","violinswarm")){
         cat("Not a valid type of community plot\n")
         return()
     }
@@ -300,13 +300,18 @@ plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50){
     axis(2,at=c(1e-3,1e-2,1e-1,1e0,1e1,1e2),labels=c("Undetected","0.01%","0.1%","1%","10%","100%"))
 
     for(i in 1:ncol(ncts)){
-        if(type=="bar"){
+        if(type%in%c("bar","barswarm")){
             s = stats[[i]]
-            rect(i-0.4,s$stats[2],i+0.4,s$stats[4],col=xcols[i])
+            if(type=="bar"){
+                points(rep(i,length(s$out)),s$out,pch=20,col=xcols[i])
+                rect(i-0.4,s$stats[2],i+0.4,s$stats[4],col=xcols[i])
+            }else{
+                points(rep(i,length(s$out)),s$out,pch=20)
+                rect(i-0.4,s$stats[2],i+0.4,s$stats[4])
+            }
             segments(rep(i,2),s$stats[c(1,4)],rep(i,2),s$stats[c(2,5)])
             segments(i-0.4,s$stats[3],i+0.4,s$stats[3],lwd=2)
-            points(rep(i,length(s$out)),s$out,pch=20,col=xcols[i])
-        }else if(type=="violin"){
+        }else if(type%in%c("violin","violinswarm")){
             h = hists[[i]]
             if(sum(h$counts)>0){
                 ycoords = approx(h$mids,n=5*res)$y
@@ -315,15 +320,23 @@ plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50){
                 rpred <- predict(lo,rev(ycoords))
                 pred[pred<0] <- 0
                 rpred[rpred<0] <- 0
-                polygon(c(i,i-pred,i,i+rpred),c(10^-2.8,ycoords,1e2,rev(ycoords)),col=xcols[i])
+                if(type=="violin"){
+                    polygon(c(i,i-pred,i,i+rpred),c(10^-2.8,ycoords,1e2,rev(ycoords)),col=xcols[i])
+                }else{
+                    polygon(c(i,i-pred,i,i+rpred),c(10^-2.8,ycoords,1e2,rev(ycoords)))
+                }
                 segments(i-0.4,stats[[i]]$stats[3],i+0.4,stats[[i]]$stats[3],lwd=2)
-                #polygon(c(i-h$counts/max(h$counts*2),rev(i+h$counts/max(h$counts*2))),c(h$mids,rev(h$mids)),col=xcols[i])
             }
         }else if(type=="points"){
             points(rep(i,nrow(ncts)),ncts[,i],col=xcols[i],pch=20)
+        }else if(type=="swarm"){
+            lines(c(i,i),c(2e-3,1e2),col=1,lwd=1)
         }
         points(i,1e-3,cex=4*zeros[i]/nrow(ncts),col=xcols[i],pch=20)
         text(i,1.3e-3,zeros[i])
+    }
+    if(type%in%c("swarm","barswarm","violinswarm")){
+        beeswarm(x=as.data.frame(ncts),add=TRUE,col=xcols,pch=20,corral="wrap")
     }
 
     return(list(propCounts=ncts,stats=stats))

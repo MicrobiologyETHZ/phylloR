@@ -1,6 +1,6 @@
 Package: phylloR
 Title: R package for phyllosphere analysis
-Version: 0.0.0.13
+Version: 1.0.1
 Authors@R: 
     person(given = "Chris",
            family = "Field",
@@ -16,7 +16,8 @@ Depends:
     DESeq2,
     vegan,
     igraph,
-    bezier
+    bezier,
+    beeswarm
 Remotes: cmfield/apextra
 License: GPL-3
 Encoding: UTF-8

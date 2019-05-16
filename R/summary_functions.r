@@ -328,6 +328,11 @@ igraphFromSummary <- function(fcMatrix,pvMatrix,cutoff,type="removal"){
         edge_attr(network,attr) <- edgeAttrList[,attr]
     }
 
+    # Add vertices for experiments that had no effect
+    for(missing in colnames(fcMatrix)[!colnames(fcMatrix)%in%V(network)$name]){
+        network <- add_vertices(network,1,name=missing)
+    }
+
     vertex_attr(network,type) <- vertex_attr(network,"name")%in%colnames(fcMatrix)
     vertex_attr(network,"color") <- leafTaxonomy[vertex_attr(network,"name"),"Color"]
     vertex_attr(network,"name") <- leafTaxonomy[vertex_attr(network,"name"),"Name"]

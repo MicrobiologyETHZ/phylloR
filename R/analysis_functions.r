@@ -300,32 +300,36 @@ plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50){
     axis(2,at=c(1e-3,1e-2,1e-1,1e0,1e1,1e2),labels=c("Undetected","0.01%","0.1%","1%","10%","100%"))
 
     for(i in 1:ncol(ncts)){
+        s = stats[[i]]
         if(type%in%c("bar","barswarm")){
-            s = stats[[i]]
             if(type=="bar"){
                 points(rep(i,length(s$out)),s$out,pch=20,col=xcols[i])
                 rect(i-0.4,s$stats[2],i+0.4,s$stats[4],col=xcols[i])
             }else{
-                points(rep(i,length(s$out)),s$out,pch=20)
-                rect(i-0.4,s$stats[2],i+0.4,s$stats[4])
+                points(rep(i,length(s$out)),s$out,pch=20,col=paste(xcols[i],"40",sep=""))
+                rect(i-0.4,s$stats[2],i+0.4,s$stats[4],col=paste(xcols[i],"40",sep=""))
             }
             segments(rep(i,2),s$stats[c(1,4)],rep(i,2),s$stats[c(2,5)])
-            segments(i-0.4,s$stats[3],i+0.4,s$stats[3],lwd=2)
         }else if(type%in%c("violin","violinswarm")){
             h = hists[[i]]
             if(sum(h$counts)>0){
                 ycoords = approx(h$mids,n=5*res)$y
                 lo <- loess(h$counts/max(h$counts*2)~h$mids,span=0.25)
                 pred <- predict(lo,ycoords)
-                rpred <- predict(lo,rev(ycoords))
-                pred[pred<0] <- 0
-                rpred[rpred<0] <- 0
-                if(type=="violin"){
-                    polygon(c(i,i-pred,i,i+rpred),c(10^-2.8,ycoords,1e2,rev(ycoords)),col=xcols[i])
-                }else{
-                    polygon(c(i,i-pred,i,i+rpred),c(10^-2.8,ycoords,1e2,rev(ycoords)))
+                pred[pred<=0] <- NA
+                predlist <- split(pred,cumsum(is.na(pred)))
+                ycoordslist <- split(ycoords,cumsum(is.na(pred)))
+                ycoordslist <- lapply(1:length(ycoordslist),function(x) c(ycoordslist[[x]][!is.na(predlist[[x]])],rev(ycoordslist[[x]][!is.na(predlist[[x]])])))
+                predlist <- lapply(predlist,function(x) c(i-x[!is.na(x)],i+rev(x[!is.na(x)])))
+                for(p in 1:length(predlist)){
+                    pred = predlist[[p]]
+                    ycoords = ycoordslist[[p]]
+                    if(type=="violin"){
+                        polygon(pred,ycoords,col=xcols[i])
+                    }else{
+                        polygon(pred,ycoords,col=paste(xcols[i],"40",sep=""))
+                    }
                 }
-                segments(i-0.4,stats[[i]]$stats[3],i+0.4,stats[[i]]$stats[3],lwd=2)
             }
         }else if(type=="points"){
             points(rep(i,nrow(ncts)),ncts[,i],col=xcols[i],pch=20)
@@ -338,7 +342,7 @@ plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50){
     if(type%in%c("swarm","barswarm","violinswarm")){
         beeswarm(x=as.data.frame(ncts),add=TRUE,col=xcols,pch=20,corral="wrap")
     }
-
+    segments(1:ncol(ncts)-0.4,unlist(lapply(stats,function(x) x$stats[3])),1:ncol(ncts)+0.4,unlist(lapply(stats,function(x) x$stats[3])),lwd=2)
     return(list(propCounts=ncts,stats=stats))
 }
 

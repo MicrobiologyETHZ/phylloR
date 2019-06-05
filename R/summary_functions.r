@@ -87,7 +87,7 @@ treatmap <- function(phylo,mat,mask=NULL,mask.color="lightgrey",overlay=NULL,asp
 
     # Use mat.phylo if given, otherwise mat.col.order preferentially over mat.hclust to hierarchically cluster the matrix columns
     if(!is.null(mat.phylo)){
-        hc = list(order=match(mat.phylo$tip.label,colnames(fc6c)))
+        hc = list(order=match(mat.phylo$tip.label,colnames(mat)))
     }else if(!is.null(mat.col.order)){
         hc = list(order=mat.col.order)
     }else if(mat.hclust){

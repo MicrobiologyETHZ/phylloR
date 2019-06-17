@@ -242,10 +242,10 @@ plotBipartiteSummary <- function(fcMatrix,pvMatrix,leftPhylo=NULL,rightPhylo=NUL
     }
 
     if(is.null(leftCols)){
-        leftCols="black"
+        leftCols=rep("black",ncol(fcMatrix))
     }
     if(is.null(rightCols)){
-        rightCols="black"
+        rightCols=rep("black",nrow(fcMatrix))
     }
     names(leftCols) <- colnames(fcMatrix)
     names(rightCols) <- rownames(fcMatrix)
@@ -253,12 +253,14 @@ plotBipartiteSummary <- function(fcMatrix,pvMatrix,leftPhylo=NULL,rightPhylo=NUL
     fcMatrix <- fcMatrix[rightOrder,leftOrder]
     pvMatrix <- pvMatrix[rightOrder,leftOrder]
 
+    height = max(nrow(fcMatrix),ncol(fcMatrix))
+
     par(mar=c(0,0,0,0)+0.1)
     plot.new()
-    plot.window(xlim=c(-1,1),ylim=c(1,nrow(fcMatrix)))
+    plot.window(xlim=c(-1,1),ylim=c(1,height))
 
     if(!is.null(leftPhylo)){
-        lyoffset <- (nrow(fcMatrix)-Ntip(leftPhylo))/2
+        lyoffset <- (height-Ntip(leftPhylo))/2
         draw.phylo(-1,1+lyoffset,-0.75,Ntip(leftPhylo)+lyoffset,leftPhylo,direction="r",show.tip.label=F)
         text(-0.75,1:ncol(fcMatrix)+lyoffset,leftLabs[leftOrder],pos=4,col=leftCols[leftOrder])
     }else{
@@ -266,7 +268,7 @@ plotBipartiteSummary <- function(fcMatrix,pvMatrix,leftPhylo=NULL,rightPhylo=NUL
         text(-0.75,1:ncol(fcMatrix)+lyoffset,leftLabs[leftOrder],pos=2,col=leftCols[leftOrder])
     }
     if(!is.null(rightPhylo)){
-        ryoffset <- (nrow(fcMatrix)-Ntip(rightPhylo))/2
+        ryoffset <- (height-Ntip(rightPhylo))/2
         draw.phylo(0.75,1+ryoffset,1,Ntip(rightPhylo)+ryoffset,rightPhylo,direction="l",show.tip.label=F)
         text(0.75,1:nrow(fcMatrix)+ryoffset,rightLabs[rightOrder],pos=2,col=rightCols[rightOrder])
     }else{
@@ -278,6 +280,9 @@ plotBipartiteSummary <- function(fcMatrix,pvMatrix,leftPhylo=NULL,rightPhylo=NUL
     for(i in 1:nrow(fcMatrix)){
         for(j in 1:ncol(fcMatrix)){
             s = which(rownames(fcMatrix)==colnames(fcMatrix)[j])
+            if(length(s)==0){
+                s = 0
+            }
             p = matrix(c(-0.75+tip.label.width,0,0,0.75-tip.label.width,j+lyoffset,j+lyoffset,i+ryoffset,i+ryoffset),ncol=2)
             if((i!=s) & (pvMatrix[i,j]<cutoff)){
                 lines(bezier(t,p),col=paste(c("#313695","#FFFFFF","#a50026")[sign(fcMatrix[i,j])+2],"77",sep=""),lwd=abs(fcMatrix[i,j]))

@@ -252,10 +252,11 @@ plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=
 #' Function to produce a bar or violin plot of an individual community.
 #'
 #' @param counts A count table in which the rows are strains or OTUs and the columns are samples. The table should include only a single sample group.
-#' @param type Determines the plot style, either 'bar', 'violin', 'swarm', 'barswarm' or 'violinswarm'.
+#' @param type Determines the plot style, either 'bar', 'violin', 'points', 'swarm', 'barswarm' or 'violinswarm'.
 #' @param xlabels  An optional vector of strain names, the default is to use the row names of the count table.
 #' @param xcols An optional vector of strain colours, the default is to use rainbow(). 
 #' @param res The resolution of the histograms used to create the violins for that plot style.
+#' @param cutoff A numeric integer, which if provided reduces the plot to only the given number of most abundant strains.
 #' @details
 #' For each strain, samples in which they were not observed are counted and separated from the main bar or violin.
 #' As a result, the number of samples in each bar or violin varies, and the histogram for each violin is therefore normalised.
@@ -266,7 +267,7 @@ plotCommunityChanges <- function(cds,soi=NULL,cutoff=0.05,rowLabs=NULL,subtitle=
 #' @examples
 #' None
 
-plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50){
+plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50,cutoff=NULL){
     if(!type%in%c("bar","violin","points","swarm","barswarm","violinswarm")){
         cat("Not a valid type of community plot\n")
         return()
@@ -275,7 +276,7 @@ plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50){
         xlabels <- rownames(counts)
     }
     if(is.null(xcols)){
-        xcols=rainbow(nrow(counts))
+        xcols <- rainbow(nrow(counts))
     }
 
     par(mar=0.1+c(12,4,1,1))
@@ -285,8 +286,15 @@ plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50){
     ncts <- 100*counts/rowSums
     medians <- apply(ncts,2,function(x) median(x[x>0]))
     ncts <- ncts[,order(medians,decreasing=T)]
-    xlabels = xlabels[order(medians,decreasing=T)]
-    xcols = xcols[order(medians,decreasing=T)]
+    xlabels <- xlabels[order(medians,decreasing=T)]
+    xcols <- xcols[order(medians,decreasing=T)]
+
+    if(!is.null(cutoff)){
+        cutoff <- as.integer(cutoff)
+        ncts <- ncts[,1:cutoff]
+        xlabels <- xlabels[1:cutoff]
+        xcols <- xcols[1:cutoff]
+    }
 
     brks = 10^seq(-2.8,2,length=res)
 

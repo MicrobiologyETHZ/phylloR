@@ -298,8 +298,8 @@ plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50,cutof
 
     brks = 10^seq(-2.8,2,length=res)
 
-    stats <- apply(ncts,2,function(x) boxplot(x[x>0],plot=F))
-    hists <- apply(ncts,2,function(x) hist(x[x>0],breaks=brks,plot=F))
+    stats <- apply(ncts,2,function(x) boxplot(x[x>(10^-2.8)],plot=F))
+    hists <- apply(ncts,2,function(x) hist(x[x>(10^-2.8)],breaks=brks,plot=F))
     zeros <- apply(ncts,2,function(x) sum(x==0))
 
     plot(1,type="n",xlim=c(1,ncol(ncts)),ylim=c(1e-3,1e2),log="y",xlab="",ylab="Relative Abundance",xaxt="none",yaxt="none")

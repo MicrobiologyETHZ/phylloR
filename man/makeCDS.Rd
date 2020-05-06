@@ -4,8 +4,16 @@
 \alias{makeCDS}
 \title{Function to make a compatible data set (CDS) and calculate DESeq2 results.}
 \usage{
-makeCDS(counts, meta, include = NULL, exclude = NULL, foi,
-  ftc = NULL, title = NULL, legend = NULL)
+makeCDS(
+  counts,
+  meta,
+  include = NULL,
+  exclude = NULL,
+  foi,
+  ftc = NULL,
+  title = NULL,
+  legend = NULL
+)
 }
 \arguments{
 \item{counts}{A count table in which the rows are strains or OTUs and the columns are samples.}

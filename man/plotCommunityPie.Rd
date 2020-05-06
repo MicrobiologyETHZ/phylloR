@@ -4,8 +4,15 @@
 \alias{plotCommunityPie}
 \title{Function to produce a pie chart of an individual community.}
 \usage{
-plotCommunityPie(counts, strainTaxa, cols, taxLabels = NULL,
-  sort.tax = FALSE, drop = TRUE, ...)
+plotCommunityPie(
+  counts,
+  strainTaxa,
+  cols,
+  taxLabels = NULL,
+  sort.tax = FALSE,
+  drop = TRUE,
+  ...
+)
 }
 \arguments{
 \item{counts}{A count table in which the rows are strains or OTUs and the columns are samples. The table should include only a single sample group.}

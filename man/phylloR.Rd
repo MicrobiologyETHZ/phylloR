@@ -3,7 +3,6 @@
 \docType{package}
 \name{phylloR}
 \alias{phylloR}
-\alias{phylloR-package}
 \title{Package for microbiome analysis of the phyllosphere}
 \description{
 The package \pkg{phylloR} provides functions for analysing controlled experiments (not wild) involving the phyllosphere microbiome

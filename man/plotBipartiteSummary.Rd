@@ -4,11 +4,23 @@
 \alias{plotBipartiteSummary}
 \title{Function to plot a bipartite graph to summarise strain-strain interactions.}
 \usage{
-plotBipartiteSummary(fcMatrix, pvMatrix, leftPhylo = NULL,
-  rightPhylo = NULL, leftOrder = NULL, rightOrder = NULL,
-  leftLabs = NULL, rightLabs = NULL, leftCols = NULL,
-  rightCols = NULL, experiment.type = "removal",
-  tip.label.width = 0.1, cutoff = 0.05)
+plotBipartiteSummary(
+  fcMatrix,
+  pvMatrix,
+  leftPhylo = NULL,
+  rightPhylo = NULL,
+  leftOrder = NULL,
+  rightOrder = NULL,
+  leftLabs = NULL,
+  rightLabs = NULL,
+  leftCols = NULL,
+  rightCols = NULL,
+  leftScale = 1,
+  rightScale = 1,
+  experiment.type = "removal",
+  tip.label.width = 0.1,
+  cutoff = 0.05
+)
 }
 \arguments{
 \item{fcMatrix}{A matrix of fold changes where the rows are labelled with the affected strains and the columns with the affector strains.}

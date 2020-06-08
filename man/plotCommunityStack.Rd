@@ -21,6 +21,9 @@ None.
 \description{
 Function to produce a stacked bar chart of a phyllosphere community
 }
+\details{
+
+}
 \examples{
 None
 }

@@ -5,6 +5,7 @@
 #' @param meta   Optional metadata that should be used to group samples
 #' @param cols   A named vector of colors for the different taxonomic levels
 #' @details
+#'
 #' @keywords phylloR
 #' @return None.
 #' @export

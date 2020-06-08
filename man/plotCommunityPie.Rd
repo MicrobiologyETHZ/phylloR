@@ -4,30 +4,14 @@
 \alias{plotCommunityPie}
 \title{Function to produce a pie chart of an individual community.}
 \usage{
-plotCommunityPie(
-  counts,
-  strainTaxa,
-  cols = NULL,
-  taxLabels = NULL,
-  sort.tax = FALSE,
-  drop = TRUE,
-  ...
-)
+plotCommunityPie(counts, level = "Phlass", cols = phlassColors)
 }
 \arguments{
 \item{counts}{A count table in which the rows are strains or OTUs and the columns are samples. The table should include only a single sample group.}
 
-\item{strainTaxa}{A vector of the taxonomic labels of the strains, in the order they appear in the rows of the count table.}
+\item{level}{The taxonomic level at which the data will be summarised}
 
 \item{cols}{A vector of colours where the names() of the vector correspond to the taxonomic labels.}
-
-\item{taxLabels}{An optional vector defining the taxonomic labels to plot, with the default being the unique values of strainTaxa.}
-
-\item{sort.tax}{If true, the taxonomic labels will be sorted from smallest to largest abundance.}
-
-\item{drop}{A logical indicating whether unseen taxa should be dropped from the plot, defaults to TRUE.}
-
-\item{...}{Further arguments to be passed to "pie".}
 }
 \value{
 None.
@@ -36,7 +20,7 @@ None.
 Function to produce a pie chart of an individual community.
 }
 \details{
-For each taxonomic label, the sum of all counts for the strains with that label across all samples is divided by the total sum of the count table.
+For each taxon at the chosen level, the sum of all counts for the strains in that taxon across all samples is divided by the total sum of the count table.
 }
 \examples{
 None

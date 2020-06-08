@@ -19,7 +19,10 @@
 #' None
 
 # Pie chart of a community at a provided taxonomic level, using totals across multiple samples
-plotCommunityPie <- function(counts,strainTaxa,cols,taxLabels=NULL,sort.tax=FALSE,drop=TRUE,...){
+plotCommunityPie <- function(counts,strainTaxa,cols=NULL,taxLabels=NULL,sort.tax=FALSE,drop=TRUE,...){
+    if(is.null(cols)){
+        cols <- rainbow(32)
+    }
     if(is.null(taxLabels)){
         taxLabels <- unique(strainTaxa)
     }

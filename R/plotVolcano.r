@@ -14,7 +14,7 @@
 
 plotVolcano <- function(cds,cutoff=0.05,hili=TRUE,label=TRUE){
     ylimit <- 10^floor(log10(min(cds$results$padj[!is.na(cds$results$padj)])))
-    xlimit <- round(max(abs(cds$results$log2FoldChange[!is.na(cds$results$log2FoldChange)])))
+    xlimit <- ceiling(max(abs(cds$results$log2FoldChange[!is.na(cds$results$log2FoldChange)])))
     psig <- which(cds$results$padj<=cutoff)
 
     if(hili){

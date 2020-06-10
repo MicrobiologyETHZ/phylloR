@@ -17,14 +17,14 @@
 plotCommunityStack <- function(counts,level="Phlass",meta=NULL,cols=phlassColors){    
     # Fetch the relevant taxonomy table and add a line for unknowns
     validLeafs <- rownames(counts)[rownames(counts)%in%rownames(leafTaxonomy)]
-    relTaxonomy <- leafTaxonomy[validLeafs,]
+    relTaxonomy <- leafTaxonomy[validLeafs,,drop=F]
 
     # Normalise and summarise table
     normCounts <- apply(counts,2,function(x) x/sum(x))
     validCounts <- normCounts[validLeafs,,drop=F]
 
     taxLevels <- levels(as.factor(relTaxonomy[,level]))
-    taxCounts <- sapply(taxLevels,function(x) apply(validCounts[relTaxonomy[,level]==x,],2,sum,na.rm=T))
+    taxCounts <- sapply(taxLevels,function(x) apply(validCounts[relTaxonomy[,level]==x,,drop=F],2,sum,na.rm=T))
     finalCounts <- t(cbind(taxCounts,Unclassified=1-apply(taxCounts,1,sum)))
 
     if(!is.null(meta)){    

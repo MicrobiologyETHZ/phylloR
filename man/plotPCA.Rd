@@ -14,6 +14,8 @@ plotPCA(
   cols = 1:2,
   showLegend = TRUE,
   showArrows = TRUE,
+  showHull = FALSE,
+  showSidebars = FALSE,
   showTitle = TRUE
 )
 }
@@ -35,6 +37,10 @@ plotPCA(
 \item{showLegend}{A logical indicating whether or not to show a legend.}
 
 \item{showArrows}{A logical indicating whether or not to show the top 3 or fewer significant individual responses}
+
+\item{showHull}{A logical indicating whether or not to highlight the hull of each set of points}
+
+\item{showSidebars}{A logical indicating whether or not to add box-and-whisker plots per group beside the axes}
 
 \item{showTitle}{A logical indicating whether or not to show a plot title.}
 }

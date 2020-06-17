@@ -11,6 +11,8 @@
 #' @param cols A vector of 2 colours for the points.
 #' @param showLegend A logical indicating whether or not to show a legend.
 #' @param showArrows A logical indicating whether or not to show the top 3 or fewer significant individual responses
+#' @param showHull A logical indicating whether or not to highlight the hull of each set of points
+#' @param showSidebars A logical indicating whether or not to add box-and-whisker plots per group beside the axes
 #' @param showTitle A logical indicating whether or not to show a plot title.
 #' @details
 #' None.
@@ -21,7 +23,7 @@
 #' @examples
 #' None
 
-plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=1:2,showLegend=TRUE,showArrows=TRUE,showTitle=TRUE){
+plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=1:2,showLegend=TRUE,showArrows=TRUE,showHull=FALSE,showSidebars=FALSE,showTitle=TRUE){
     if(is.null(soi)){
         soi = rownames(cds$counts)
     }
@@ -29,20 +31,18 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
         rowLabs = soi
     }
     if(is.null(subtitle)){
-        title = cds$title
+        plotTitle = cds$title
     }else{
-        title = paste(cds$title,subtitle,sep="\n")
+        plotTitle = paste(cds$title,subtitle,sep="\n")
     }
 
-    if(showLegend & showTitle){
-        par(mar=0.1+c(7,4,4,9),xpd=T)
-    }else if(showLegend){
-        par(mar=0.1+c(7,4,1,9),xpd=T)
-    }else if(showTitle){
-        par(mar=0.1+c(7,4,4,1))
+    # Margin adjustment
+    if(showSidebars){
+        nSidebars = length(cols)
     }else{
-        par(mar=0.1+c(7,4,1,1))
+        nSidebars = 0
     }
+    par(mar=0.1+c(7,4,1+(3*showTitle)+(2*nSidebars),1+(8*showLegend)+(2*nSidebars)),xpd=(showLegend | showSidebars))
 
     nct <- assay(varianceStabilizingTransformation(cds$dds,blind=F))
     nct <- t(nct)[,soi]
@@ -57,7 +57,6 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
         plot(pca$x[,1:2],
              col=cols[cds$meta[,cds$foi]],
              pch=14+as.numeric(cds$meta[,cds$ftc]),
-             main=title,
              cex=1.5
             )
         title(sub=paste("Effect Size: ",formatC(100*adn$aov.tab$R2[1],digits=3),"%; P-value: ",formatC(adn$aov.tab$Pr[1],3),sep=""),line=5)
@@ -65,10 +64,12 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
         plot(pca$x[,1:2],
              col=cols[cds$meta[,cds$foi]],
              pch=16,
-             main=title,
              cex=1.5
             )
         title(sub=paste("Effect Size: ",formatC(100*adn$aov.tab$R2[1],digits=3),"%; P-value: ",formatC(adn$aov.tab$Pr[1],3),sep=""),line=5)
+    }
+    if(showTitle){
+        title(main=plotTitle)
     }
 
     if(showArrows){
@@ -84,12 +85,48 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
         }
     }
 
+    if(showHull){
+        sets = split(as.data.frame(pca$x[,1:2]),cds$meta[,cds$foi])
+        for(i in 1:length(sets)){
+            set = sets[[i]]
+            hcoords = set[chull(set),]
+            polygon(hcoords,col=adjustcolor(cols[i],alpha.f=0.2))
+        }
+    }
+
+    if(showSidebars){
+        # PC1
+        sets = split(pca$x[,1],cds$meta[,cds$foi])
+        scale = (max(pca$x[,2])-min(pca$x[,2]))/20
+        for(i in 1:length(sets)){
+            set = sets[[i]]
+            box = boxplot(set,plot=F)
+            lines(c(box$stats[1],box$stats[5]),rep(max(pca$x[,2])+((i+0.4)*scale),2),col=cols[i])
+            rect(box$stats[2],max(pca$x[,2])+(i*scale),box$stats[4],max(pca$x[,2])+((i+0.8)*scale),border=cols[i],col="white")
+            lines(rep(box$stats[3],2),c(max(pca$x[,2])+(i*scale),max(pca$x[,2])+((i+0.8)*scale)),col=cols[i])
+            points(box$out,rep(max(pca$x[,2])+((i+0.4)*scale),length(box$out)),pch=19,cex=0.5,col=cols[i])
+        }
+        # PC2
+        sets = split(pca$x[,2],cds$meta[,cds$foi])
+        scale = (max(pca$x[,1])-min(pca$x[,1]))/20
+        for(i in 1:length(sets)){
+            set = sets[[i]]
+            box = boxplot(set,plot=F)
+            lines(rep(max(pca$x[,1])+((i+0.4)*scale),2),c(box$stats[1],box$stats[5]),col=cols[i])
+            rect(max(pca$x[,1])+(i*scale),box$stats[4],max(pca$x[,1])+((i+0.8)*scale),box$stats[2],border=cols[i],col="white")
+            lines(c(max(pca$x[,1])+(i*scale),max(pca$x[,1])+((i+0.8)*scale)),rep(box$stats[3],2),col=cols[i])
+            points(rep(max(pca$x[,1])+((i+0.4)*scale),length(box$out)),box$out,pch=19,cex=0.5,col=cols[i])
+        }
+
+    }
+
     if(showLegend){
+        scale = (max(pca$x[,1])-min(pca$x[,1]))/20
         if(!is.null(cds$ftc)){
             pairs = expand.grid(cds$legend,levels(cds$meta[,cds$ftc]))
-            legend("topleft",inset=c(1.01,0),legend=apply(pairs,1,paste,collapse=" "),pch=14+as.numeric(pairs[,2]),col=rep(cols,length(levels(cds$meta[,cds$ftc]))))
+            legend(max(pca$x[,1])+((1+nSidebars)*scale),par('usr')[4],legend=apply(pairs,1,paste,collapse=" "),pch=14+as.numeric(pairs[,2]),col=rep(cols,length(levels(cds$meta[,cds$ftc]))))
         }else{
-            legend("topleft",inset=c(1.01,0),legend=cds$legend,pch=16,col=cols)
+            legend(max(pca$x[,1])+((1+nSidebars)*scale),par('usr')[4],legend=cds$legend,pch=16,col=cols)
         }
     }
     return(list(pca=pca,stats=adn))

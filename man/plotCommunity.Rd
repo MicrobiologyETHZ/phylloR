@@ -4,14 +4,8 @@
 \alias{plotCommunity}
 \title{Function to produce a bar or violin plot of an individual community.}
 \usage{
-plotCommunity(
-  counts,
-  type = "bar",
-  xlabels = NULL,
-  xcols = NULL,
-  res = 50,
-  cutoff = NULL
-)
+plotCommunity(counts, type = "bar", xlabels = NULL, xcols = NULL,
+  res = 50, cutoff = NULL)
 }
 \arguments{
 \item{counts}{A count table in which the rows are strains or OTUs and the columns are samples. The table should include only a single sample group.}

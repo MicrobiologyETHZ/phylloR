@@ -4,16 +4,8 @@
 \alias{plotCommunityChanges}
 \title{Function to plot the changes in the community at a strain level.}
 \usage{
-plotCommunityChanges(
-  cds,
-  soi = NULL,
-  cutoff = 0.05,
-  rowLabs = NULL,
-  subtitle = NULL,
-  cols = 1:2,
-  nBars = NULL,
-  nLowPoints = TRUE
-)
+plotCommunityChanges(cds, soi = NULL, cutoff = 0.05, rowLabs = NULL,
+  subtitle = NULL, cols = 1:2, nBars = NULL, nLowPoints = TRUE)
 }
 \arguments{
 \item{cds}{A compatible data set produced by the makeCDS() function.}

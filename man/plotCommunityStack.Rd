@@ -4,7 +4,8 @@
 \alias{plotCommunityStack}
 \title{Function to produce a stacked bar chart of a phyllosphere community}
 \usage{
-plotCommunityStack(counts, level = "Phlass", meta = NULL, cols = phlassColors)
+plotCommunityStack(counts, level = "Phlass", meta = NULL,
+  cols = phlassColors)
 }
 \arguments{
 \item{counts}{A count table in which the rows are strains or OTUs and the columns are samples.}

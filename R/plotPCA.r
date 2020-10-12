@@ -14,16 +14,17 @@
 #' @param showHull A logical indicating whether or not to highlight the hull of each set of points
 #' @param showSidebars A logical indicating whether or not to add box-and-whisker plots per group beside the axes
 #' @param showTitle A logical indicating whether or not to show a plot title.
+#' @param calcSpread    A logical indicating whether or not to calculate the spread of each group of points
 #' @details
-#' None.
+#' The spread of points is calculated as the average distance to the mean location of those points.
 #' @keywords phylloR
-#' @return The results of the PCA and the adonis() function.
+#' @return The results of the PCA and the adonis() function, and optionally the spread of points in each group.
 #' @export
 #' @author Chris Field <fieldc@@ethz.ch>
 #' @examples
 #' None
 
-plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=1:2,showLegend=TRUE,showArrows=TRUE,showHull=FALSE,showSidebars=FALSE,showTitle=TRUE){
+plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL,cols=1:2,showLegend=TRUE,showArrows=TRUE,showHull=FALSE,showSidebars=FALSE,showTitle=TRUE,calcSpread=TRUE){
     if(is.null(soi)){
         soi = rownames(cds$counts)
     }
@@ -53,18 +54,25 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
         adn <- adonis(as.formula(paste("nct~",cds$foi)),perm=perm,cds$meta,method="euclidean")
     }
 
+    # Calculate variance explained
+    varxp <- 100*pca$sdev^2/sum(pca$sdev^2)
+
     if(!is.null(cds$ftc)){
         plot(pca$x[,1:2],
              col=cols[cds$meta[,cds$foi]],
              pch=14+as.numeric(cds$meta[,cds$ftc]),
-             cex=1.5
+             cex=1.5,
+             xlab = paste("PC1 (",round(varxp[1],3),")",sep=""),
+             ylab = paste("PC2 (",round(varxp[2],3),")",sep="")
             )
         title(sub=paste("Effect Size: ",formatC(100*adn$aov.tab$R2[1],digits=3),"%; P-value: ",formatC(adn$aov.tab$Pr[1],3),sep=""),line=5)
     }else{
         plot(pca$x[,1:2],
              col=cols[cds$meta[,cds$foi]],
              pch=16,
-             cex=1.5
+             cex=1.5,
+             xlab = paste("PC1 (",round(varxp[1],3),")",sep=""),
+             ylab = paste("PC2 (",round(varxp[2],3),")",sep="")
             )
         title(sub=paste("Effect Size: ",formatC(100*adn$aov.tab$R2[1],digits=3),"%; P-value: ",formatC(adn$aov.tab$Pr[1],3),sep=""),line=5)
     }
@@ -129,5 +137,17 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
             legend(max(pca$x[,1])+((1+nSidebars)*scale),par('usr')[4],legend=cds$legend,pch=16,col=cols)
         }
     }
-    return(list(pca=pca,stats=adn))
+
+    if(calcSpread){
+        sets = split(as.data.frame(pca$x), cds$meta[, cds$foi])
+        spreads <- c()
+        for(i in 1:length(sets)){
+            centroid = apply(sets[[i]], 2, mean)
+            distances = apply(sets[[i]], 1, function(x) sqrt(sum((x-centroid)^2)))
+            spreads[levels(cds$meta[, cds$foi])[i]] <- mean(distances)
+        }
+    }
+
+
+    return(list(pca=pca, stats=adn, spreads=spreads))
 }

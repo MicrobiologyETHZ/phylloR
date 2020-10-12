@@ -4,16 +4,23 @@
 \alias{plotVolcano}
 \title{Function to produce a volcano plot of DESeq2 results}
 \usage{
-plotVolcano(cds, cutoff = 0.05, hili = TRUE, label = TRUE)
+plotVolcano(cds, cutoff = 0.05, pcols = NULL, pcex = NULL,
+  hili = TRUE, labels = TRUE, ranks = NULL)
 }
 \arguments{
 \item{cds}{A compatible data set produced by the makeCDS() function.}
 
 \item{cutoff}{A p-value cutoff to determine which strains will be included individually in the plot.}
 
+\item{pcols}{A vector of point colors}
+
+\item{pcex}{A numeric vector}
+
 \item{hili}{Logical; whether to highlight significant points or not}
 
-\item{label}{Logical; whether to label significant points or not}
+\item{labels}{Logical; whether to label significant points or not}
+
+\item{ranks}{A vector of ranks for the points in the plot that will be labelled accordingly}
 }
 \description{
 Function to produce a volcano plot of DESeq2 results

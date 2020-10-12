@@ -7,7 +7,7 @@
 plotPCA(cds, soi = NULL, perm = 100, cutoff = 0.05, rowLabs = NULL,
   subtitle = NULL, cols = 1:2, showLegend = TRUE,
   showArrows = TRUE, showHull = FALSE, showSidebars = FALSE,
-  showTitle = TRUE)
+  showTitle = TRUE, calcSpread = TRUE)
 }
 \arguments{
 \item{cds}{A compatible data set produced by the makeCDS() function.}
@@ -33,15 +33,17 @@ plotPCA(cds, soi = NULL, perm = 100, cutoff = 0.05, rowLabs = NULL,
 \item{showSidebars}{A logical indicating whether or not to add box-and-whisker plots per group beside the axes}
 
 \item{showTitle}{A logical indicating whether or not to show a plot title.}
+
+\item{calcSpread}{A logical indicating whether or not to calculate the spread of each group of points}
 }
 \value{
-The results of the PCA and the adonis() function.
+The results of the PCA and the adonis() function, and optionally the spread of points in each group.
 }
 \description{
 Function to calculate and plot a PCA comparing sample groups at the whole community level.
 }
 \details{
-None.
+The spread of points is calculated as the average distance to the mean location of those points.
 }
 \examples{
 None

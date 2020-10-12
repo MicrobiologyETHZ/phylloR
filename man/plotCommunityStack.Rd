@@ -4,17 +4,21 @@
 \alias{plotCommunityStack}
 \title{Function to produce a stacked bar chart of a phyllosphere community}
 \usage{
-plotCommunityStack(counts, level = "Phlass", meta = NULL,
-  cols = phlassColors)
+plotCommunityStack(counts, level = "Phlass", taxLevels = NULL,
+  meta = NULL, cols = phlassColors, mode = "relative")
 }
 \arguments{
 \item{counts}{A count table in which the rows are strains or OTUs and the columns are samples.}
 
 \item{level}{Taxonomic level at which to summarise the community}
 
+\item{taxLevels}{Optional vector of taxonomic levels, in case you only want to plot some or reorder them}
+
 \item{meta}{Optional metadata that should be used to group samples}
 
 \item{cols}{A named vector of colors for the different taxonomic levels}
+
+\item{mode}{Either 'relative' or 'absolute' for calculating abundance}
 }
 \value{
 None.

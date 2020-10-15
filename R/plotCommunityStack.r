@@ -37,13 +37,13 @@ plotCommunityStack <- function(counts,level="Phlass",taxLevels=NULL,meta=NULL,co
     finalCounts <- t(cbind(taxCounts,Unclassified=1-apply(taxCounts,1,sum)))
 
     if(!is.null(meta)){    
-        finalCounts <- sapply(unique(meta),function(x) apply(finalCounts[,meta==x],1,sum))
+        finalCounts <- sapply(as.factor(meta),function(x) apply(finalCounts[,meta==x],1,sum))
         if(mode=="relative"){
             finalCounts <- apply(finalCounts,2,function(x) x/sum(x))
         }
     }
 
     par(mar=c(10,4,4,2)+0.1,xpd=T)
-    barplot(finalCounts,col=c(cols[taxLevels],"gray"),names.arg=unique(meta))
+    barplot(finalCounts,col=c(cols[taxLevels],"gray"),names.arg=as.factor(meta))
     legend("bottom",inset=c(0,-0.2),horiz=T,legend=taxLevels,fill=c(cols[taxLevels],"gray"))
 }

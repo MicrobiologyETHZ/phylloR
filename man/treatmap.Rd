@@ -5,8 +5,9 @@
 \title{Function to plot a heatmap aligned with a phylogenetic tree.}
 \usage{
 treatmap(phylo, mat, mask = NULL, mask.color = "lightgrey",
-  overlay = NULL, aspect.ratio = 1/exp(1), tip.labels = NULL,
-  tip.colors = NULL, z.cols = NULL, z.res = NULL,
+  overlay = NULL, borders.lwd = NULL, borders.lty = NULL,
+  aspect.ratio = 1/exp(1), tip.labels = NULL, tip.colors = NULL,
+  z.cols = NULL, z.res = NULL, z.sym = FALSE,
   tip.label.width = NULL, scalebar = TRUE, mat.labels = NULL,
   mat.label.height = NULL, mat.label.colors = "black",
   mat.col.order = NULL, mat.hclust = FALSE, mat.phylo = NULL, ...)
@@ -22,6 +23,10 @@ treatmap(phylo, mat, mask = NULL, mask.color = "lightgrey",
 
 \item{overlay}{An optional matrix of character strings to display on the cells of the heatmap, for instance significance labels.}
 
+\item{borders.lwd}{An optional matrix of line widths for the borders of each cell}
+
+\item{borders.lty}{An optional matrix of line types for the borders of each cell}
+
 \item{aspect.ratio}{The aspect ratio width/height in which to plot the phylogenetic tree.}
 
 \item{tip.labels}{A vector of character strings for tip labels, defaulting to those of the "phylo" object if not provided.}
@@ -31,6 +36,8 @@ treatmap(phylo, mat, mask = NULL, mask.color = "lightgrey",
 \item{z.cols}{A vector of colors for the z-axis of the heatmap, see details for the default.}
 
 \item{z.res}{A resolution for the color vector of the z-axis if automatically calculated.}
+
+\item{z.sym}{A logical indicating whether the z-axis should be forced to be symmetrical.}
 
 \item{tip.label.width}{A numeric indicating how much space to put between the heatmap and tree for plotting the labels, defaulting to 20\% of the plotted tree width.}
 
@@ -55,7 +62,7 @@ None
 Function to plot a heatmap aligned with a phylogenetic tree.
 }
 \details{
-The default color vector for the z-axis is generated automatically if not provided. Firstly it is determined whether "mat" contains both positive and negative values. If it is one-sided then a vector of 32 colors is made with "colorRampPalette", between white and blue. If it is two-sided, a vector of 31 colors is made between blue, white and red. The argument "z.res" can be used to fix the number of colors in the vector, though it will still generate an odd number if the heatmap is two-sided. Providing "z.cols" will ignore all these determinations and split the color vector evenly between the heatmap's minimum and maximum.
+The default color vector for the z-axis is generated automatically if not provided. Firstly it is determined whether "mat" contains both positive and negative values. If it is one-sided then a vector of 32 colors is made with "colorRampPalette", between white and blue. If it is two-sided, a vector of 31 colors is made between blue, white and red. The argument "z.res" can be used to fix the number of colors in the vector, though it will still generate an odd number if the heatmap is two-sided. Providing "z.cols" will ignore all these determinations and split the color vector evenly between the heatmap's minimum and maximum. Setting z.sym to TRUE will make the scale symmetrical about zero, if two-sided.
 }
 \examples{
 None

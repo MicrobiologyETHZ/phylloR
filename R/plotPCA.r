@@ -62,8 +62,8 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
              col=cols[cds$meta[,cds$foi]],
              pch=14+as.numeric(cds$meta[,cds$ftc]),
              cex=1.5,
-             xlab = paste("PC1 (",round(varxp[1],3),")",sep=""),
-             ylab = paste("PC2 (",round(varxp[2],3),")",sep="")
+             xlab = paste("PC1 (",round(varxp[1],3),"%)",sep=""),
+             ylab = paste("PC2 (",round(varxp[2],3),"%)",sep="")
             )
         title(sub=paste("Effect Size: ",formatC(100*adn$aov.tab$R2[1],digits=3),"%; P-value: ",formatC(adn$aov.tab$Pr[1],3),sep=""),line=5)
     }else{
@@ -71,8 +71,8 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
              col=cols[cds$meta[,cds$foi]],
              pch=16,
              cex=1.5,
-             xlab = paste("PC1 (",round(varxp[1],3),")",sep=""),
-             ylab = paste("PC2 (",round(varxp[2],3),")",sep="")
+             xlab = paste("PC1 (",round(varxp[1],3),"%)",sep=""),
+             ylab = paste("PC2 (",round(varxp[2],3),"%)",sep="")
             )
         title(sub=paste("Effect Size: ",formatC(100*adn$aov.tab$R2[1],digits=3),"%; P-value: ",formatC(adn$aov.tab$Pr[1],3),sep=""),line=5)
     }

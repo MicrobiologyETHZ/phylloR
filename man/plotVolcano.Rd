@@ -5,16 +5,18 @@
 \title{Function to produce a volcano plot of DESeq2 results}
 \usage{
 plotVolcano(cds, cutoff = 0.05, pcols = NULL, pcex = NULL,
-  hili = TRUE, labels = TRUE, ranks = NULL)
+  pborder = NULL, hili = TRUE, labels = TRUE, ranks = NULL)
 }
 \arguments{
 \item{cds}{A compatible data set produced by the makeCDS() function.}
 
 \item{cutoff}{A p-value cutoff to determine which strains will be included individually in the plot.}
 
-\item{pcols}{A vector of point colors}
+\item{pcols}{An optional vector of point colors}
 
-\item{pcex}{A numeric vector}
+\item{pcex}{An optional numeric vector indicating the size of the points}
+
+\item{pborder}{An optional vector of border colors for the points}
 
 \item{hili}{Logical; whether to highlight significant points or not}
 

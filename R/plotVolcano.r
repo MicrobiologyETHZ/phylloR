@@ -2,8 +2,9 @@
 #'
 #' @param cds       A compatible data set produced by the makeCDS() function.
 #' @param cutoff    A p-value cutoff to determine which strains will be included individually in the plot.
-#' @param pcols     A vector of point colors
-#' @param pcex      A numeric vector 
+#' @param pcols     An optional vector of point colors
+#' @param pcex      An optional numeric vector indicating the size of the points
+#' @param pborder   An optional vector of border colors for the points
 #' @param hili      Logical; whether to highlight significant points or not
 #' @param labels    Logical; whether to label significant points or not
 #' @param ranks     A vector of ranks for the points in the plot that will be labelled accordingly
@@ -15,7 +16,7 @@
 #' @examples
 #' None
 
-plotVolcano <- function(cds,cutoff=0.05,pcols=NULL,pcex=NULL,hili=TRUE,labels=TRUE,ranks=NULL){
+plotVolcano <- function(cds,cutoff=0.05,pcols=NULL,pcex=NULL,pborder=NULL,hili=TRUE,labels=TRUE,ranks=NULL){
     if(is.null(pcols)){
         pcols = leafTaxonomy[rownames(cds$results),]$Color
         pcols[is.na(pcols)] <- "#BEBEBE"
@@ -37,7 +38,11 @@ plotVolcano <- function(cds,cutoff=0.05,pcols=NULL,pcex=NULL,hili=TRUE,labels=TR
         pcols <- paste(pcols, alphas, sep="")
     }
 
-    plot(cds$results$log2FoldChange,cds$results$padj,xlim=c(-xlimit,xlimit),ylim=c(1,ylimit),log="y",xlab="Log2 Fold Change",ylab="Adjusted P-Value",pch=20,col=pcols,cex=pcex,panel.first=grid())
+    if(is.null(pborder)){
+        plot(cds$results$log2FoldChange,cds$results$padj,xlim=c(-xlimit,xlimit),ylim=c(1,ylimit),log="y",xlab="Log2 Fold Change",ylab="Adjusted P-Value",pch=20,col=pcols,cex=pcex,panel.first=grid())
+    }else{
+        plot(cds$results$log2FoldChange,cds$results$padj,xlim=c(-xlimit,xlimit),ylim=c(1,ylimit),log="y",xlab="Log2 Fold Change",ylab="Adjusted P-Value",pch=21,col=pborder,bg=pcols,cex=pcex,panel.first=grid())
+    }
     abline(h=cutoff,lty=2)
     if(labels & (length(psig)>0)){
         text(cds$results$log2FoldChange[psig],cds$results$padj[psig],rownames(cds$results)[psig],pos=4,offset=0.2)

@@ -23,6 +23,7 @@
 #' @param mat.phylo         An object of class "phylo" which is used to order the columns of the heatmap.
 #' @details
 #' The default color vector for the z-axis is generated automatically if not provided. Firstly it is determined whether "mat" contains both positive and negative values. If it is one-sided then a vector of 32 colors is made with "colorRampPalette", between white and blue. If it is two-sided, a vector of 31 colors is made between blue, white and red. The argument "z.res" can be used to fix the number of colors in the vector, though it will still generate an odd number if the heatmap is two-sided. Providing "z.cols" will ignore all these determinations and split the color vector evenly between the heatmap's minimum and maximum. Setting z.sym to TRUE will make the scale symmetrical about zero, if two-sided.
+#' If mat.hclust is set, it will cluster using method 'single'.
 #' @keywords None
 #' @return None
 #' @export
@@ -30,7 +31,7 @@
 #' @examples
 #' None
 
-treatmap <- function(phylo, mat, mask=NULL, mask.color="lightgrey", overlay=NULL, borders.lwd=NULL, borders.lty=NULL, aspect.ratio=1/exp(1), tip.labels=NULL, tip.colors=NULL, z.cols=NULL, z.res=NULL, z.sym=FALSE, tip.label.width=NULL, scalebar=TRUE, mat.labels=NULL, mat.label.height=NULL, mat.label.colors="black", mat.col.order=NULL, mat.hclust=FALSE, mat.phylo=NULL, ...){
+treatmap <- function(phylo, mat, mask=NULL, mask.color="lightgrey", overlay=NULL, borders.col=NULL, borders.lwd=NULL, borders.lty=NULL, aspect.ratio=1/exp(1), tip.labels=NULL, tip.colors=NULL, z.cols=NULL, z.res=NULL, z.sym=FALSE, tip.label.width=NULL, scalebar=TRUE, mat.labels=NULL, mat.label.height=NULL, mat.label.colors="black", mat.col.order=NULL, mat.hclust=FALSE, mat.phylo=NULL, ...){
     # Check if the matrix is one- or two-sided
     if(sign(min(mat, na.rm=T))==sign(max(mat, na.rm=T))){
         matType <- 1
@@ -95,7 +96,7 @@ treatmap <- function(phylo, mat, mask=NULL, mask.color="lightgrey", overlay=NULL
         hc = list(order=mat.col.order)
     }else if(mat.hclust){
         d = dist(t(mat))
-        hc = hclust(d)
+        hc = hclust(d, method='single')
     }else{
         hc = list(order=1:ncol(mat))
     }
@@ -133,16 +134,25 @@ treatmap <- function(phylo, mat, mask=NULL, mask.color="lightgrey", overlay=NULL
     # Plot the heatmap
     if(is.null(borders.lwd)){
         borders.lwd = par("lwd")
+    }else{
+        borders.lwd = borders.lwd[phyloOrder, hc$order]
     }
     if(is.null(borders.lty)){
         borders.lty = par("lty")
+    }else{
+        borders.lty = borders.lty[phyloOrder, hc$order]
+    }
+    if(is.null(borders.col)){
+        borders.col = "black"
+    }else{
+        borders.col = borders.col[phyloOrder, hc$order]
     }
     mat.colors = z.cols[cells]
     mat.colors[!mask] = mask.color
     rect(rep(phyloWidth+tip.label.width+(0:(ncol(mat)-1)), each=nrow(mat)), 0.5+rep(0:(nrow(mat)-1), ncol(mat)), rep(phyloWidth+tip.label.width+(1:ncol(mat)), each=nrow(mat)), 0.5+rep(1:nrow(mat), ncol(mat)), col=mat.colors,border=NA)
     text(phyloWidth+tip.label.width+(0.5+0:(ncol(mat)-1)), nrow(mat)+1, mat.labels[hc$order], adj=c(0, 0.5), srt=90, col=mat.label.colors[hc$order])
     # Additional borders added after for correct overlap
-    rect(rep(phyloWidth+tip.label.width+(0:(ncol(mat)-1)), each=nrow(mat)), 0.5+rep(0:(nrow(mat)-1), ncol(mat)), rep(phyloWidth+tip.label.width+(1:ncol(mat)), each=nrow(mat)), 0.5+rep(1:nrow(mat), ncol(mat)), col=NA, border="black",lty=borders.lty, lwd=borders.lwd)
+    rect(rep(phyloWidth+tip.label.width+(0:(ncol(mat)-1)), each=nrow(mat)), 0.5+rep(0:(nrow(mat)-1), ncol(mat)), rep(phyloWidth+tip.label.width+(1:ncol(mat)), each=nrow(mat)), 0.5+rep(1:nrow(mat), ncol(mat)), col=NA, border=borders.col, lty=borders.lty, lwd=borders.lwd)
 
     # Add the overlay if requested
     if(!is.null(overlay)){

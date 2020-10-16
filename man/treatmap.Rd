@@ -5,9 +5,9 @@
 \title{Function to plot a heatmap aligned with a phylogenetic tree.}
 \usage{
 treatmap(phylo, mat, mask = NULL, mask.color = "lightgrey",
-  overlay = NULL, borders.lwd = NULL, borders.lty = NULL,
-  aspect.ratio = 1/exp(1), tip.labels = NULL, tip.colors = NULL,
-  z.cols = NULL, z.res = NULL, z.sym = FALSE,
+  overlay = NULL, borders.col = NULL, borders.lwd = NULL,
+  borders.lty = NULL, aspect.ratio = 1/exp(1), tip.labels = NULL,
+  tip.colors = NULL, z.cols = NULL, z.res = NULL, z.sym = FALSE,
   tip.label.width = NULL, scalebar = TRUE, mat.labels = NULL,
   mat.label.height = NULL, mat.label.colors = "black",
   mat.col.order = NULL, mat.hclust = FALSE, mat.phylo = NULL, ...)
@@ -63,6 +63,7 @@ Function to plot a heatmap aligned with a phylogenetic tree.
 }
 \details{
 The default color vector for the z-axis is generated automatically if not provided. Firstly it is determined whether "mat" contains both positive and negative values. If it is one-sided then a vector of 32 colors is made with "colorRampPalette", between white and blue. If it is two-sided, a vector of 31 colors is made between blue, white and red. The argument "z.res" can be used to fix the number of colors in the vector, though it will still generate an odd number if the heatmap is two-sided. Providing "z.cols" will ignore all these determinations and split the color vector evenly between the heatmap's minimum and maximum. Setting z.sym to TRUE will make the scale symmetrical about zero, if two-sided.
+If mat.hclust is set, it will cluster using method 'single'.
 }
 \examples{
 None

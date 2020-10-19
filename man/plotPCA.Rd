@@ -43,7 +43,7 @@ The results of the PCA and the adonis() function, and optionally the spread of p
 Function to calculate and plot a PCA comparing sample groups at the whole community level.
 }
 \details{
-The spread of points is calculated as the average distance to the mean location of those points.
+The spread of points is given as a vector of distances from each point in the group to that group's centroid.
 }
 \examples{
 None

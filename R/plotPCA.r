@@ -2,21 +2,21 @@
 
 #' Function to calculate and plot a PCA comparing sample groups at the whole community level.
 #'
-#' @param cds A compatible data set produced by the makeCDS() function.
-#' @param soi A vector containing the names of the strains of interest, matching row names of the CDS count table.
-#' @param perm The number of permutations for the PERMANOVA, passed to the adonis() function.
-#' @param cutoff A p-value cutoff to determine which strains will be included individually in the plot.
-#' @param rowLabs A vector of names for the strains of interest, for plotting.
-#' @param subtitle A subtitle for the plot.
-#' @param cols A vector of 2 colours for the points.
-#' @param showLegend A logical indicating whether or not to show a legend.
-#' @param showArrows A logical indicating whether or not to show the top 3 or fewer significant individual responses
-#' @param showHull A logical indicating whether or not to highlight the hull of each set of points
-#' @param showSidebars A logical indicating whether or not to add box-and-whisker plots per group beside the axes
-#' @param showTitle A logical indicating whether or not to show a plot title.
+#' @param cds           A compatible data set produced by the makeCDS() function.
+#' @param soi           A vector containing the names of the strains of interest, matching row names of the CDS count table.
+#' @param perm          The number of permutations for the PERMANOVA, passed to the adonis() function.
+#' @param cutoff        A p-value cutoff to determine which strains will be included individually in the plot.
+#' @param rowLabs       A vector of names for the strains of interest, for plotting.
+#' @param subtitle      A subtitle for the plot.
+#' @param cols          A vector of 2 colours for the points.
+#' @param showLegend    A logical indicating whether or not to show a legend.
+#' @param showArrows    A logical indicating whether or not to show the top 3 or fewer significant individual responses
+#' @param showHull      A logical indicating whether or not to highlight the hull of each set of points
+#' @param showSidebars  A logical indicating whether or not to add box-and-whisker plots per group beside the axes
+#' @param showTitle     A logical indicating whether or not to show a plot title.
 #' @param calcSpread    A logical indicating whether or not to calculate the spread of each group of points
 #' @details
-#' The spread of points is calculated as the average distance to the mean location of those points.
+#' The spread of points is given as a vector of distances from each point in the group to that group's centroid.
 #' @keywords phylloR
 #' @return The results of the PCA and the adonis() function, and optionally the spread of points in each group.
 #' @export
@@ -144,7 +144,7 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
         for(i in 1:length(sets)){
             centroid = apply(sets[[i]], 2, mean)
             distances = apply(sets[[i]], 1, function(x) sqrt(sum((x-centroid)^2)))
-            spreads[levels(cds$meta[, cds$foi])[i]] <- mean(distances)
+            spreads[levels(cds$meta[, cds$foi])[i]] <- distances
         }
     }
 

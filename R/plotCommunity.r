@@ -53,9 +53,9 @@ plotCommunity <- function(counts,type="bar",xlabels=NULL,xcols=NULL,res=50,cutof
     hists <- apply(ncts,2,function(x) hist(x[x>(10^-2.8)],breaks=brks,plot=F))
     zeros <- apply(ncts,2,function(x) sum(x==0))
 
-    plot(1,type="n",xlim=c(1,ncol(ncts)),ylim=c(1e-3,1e2),log="y",xlab="",ylab="Relative Abundance",xaxt="none",yaxt="none")
+    plot(1,type="n",xaxs="i",xlim=c(0.5,0.5+ncol(ncts)),ylim=c(1e-3,1e2),log="y",xlab="",ylab="Relative Abundance",xaxt="none",yaxt="none")
     abline(h=c(1e-2,1e-1,1e0,1e1,1e2),col="grey")
-    axis(1,at=1:ncol(ncts),labels=xlabels,las=2)
+    axis(1,xaxs="i",at=1:ncol(ncts),labels=xlabels,las=2)
     axis(2,at=c(1e-3,1e-2,1e-1,1e0,1e1,1e2),labels=c("Undetected","0.01%","0.1%","1%","10%","100%"))
 
     for(i in 1:ncol(ncts)){

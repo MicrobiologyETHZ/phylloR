@@ -140,11 +140,11 @@ plotPCA <- function(cds,soi=NULL,perm=100,cutoff=0.05,rowLabs=NULL,subtitle=NULL
 
     if(calcSpread){
         sets = split(as.data.frame(pca$x), cds$meta[, cds$foi])
-        spreads <- c()
+        spreads <- list()
         for(i in 1:length(sets)){
             centroid = apply(sets[[i]], 2, mean)
             distances = apply(sets[[i]], 1, function(x) sqrt(sum((x-centroid)^2)))
-            spreads[levels(cds$meta[, cds$foi])[i]] <- distances
+            spreads[[levels(cds$meta[, cds$foi])[i]]] <- distances
         }
     }
 

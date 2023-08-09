@@ -120,7 +120,7 @@ treatmap <- function(phylo, mat, mask=NULL, mask.color="lightgrey", overlay=NULL
         cells <- apply(mat, 2, function(x) cut(x, bins, labels=F))
     }else{
         matMax <- ceiling(max(mat[mask]))
-        bins <- seq(0:matMax, length.out=z.res)
+        bins <- seq(0, matMax, length.out=z.res)
         cells <- apply(mat, 2, function(x) cut(x, bins, labels=F))
     }
 
